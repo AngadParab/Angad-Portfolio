@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Angad Parab | Terminal Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              pageBg: '#223041',
+              termBgStart: '#05011a',
+              termBgEnd: '#070526',
+              termBorder: '#6f2742',
+              termHeader: '#7b3a4b',
+              pixelPink: '#f23f6d',
+              neonGreen: '#9ef06a',
+              mustard: '#ffd15d',
+              mint: '#8bf7b8',
+              divider: '#334050',
+              socialBg: '#2f3c47',
+            },
+            fontFamily: {
+              mono: ['"JetBrains Mono"', 'monospace'],
+              pixel: ['"Press Start 2P"', 'cursive'],
+            },
+            boxShadow: {
+              'term-glow': '0 0 20px rgba(111, 39, 66, 0.2)',
+            },
+            animation: {
+              'caret-blink': 'blink 1s step-end infinite',
+              'fade-in': 'fadeIn 0.3s ease-in-out',
+            },
+            keyframes: {
+              blink: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      * {
+        cursor: none !important;
+      }
+      /* Custom Scrollbar for Webkit */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #05011a; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #6f2742; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #f23f6d; 
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-pageBg text-white h-screen overflow-hidden antialiased selection:bg-pixelPink selection:text-white">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
