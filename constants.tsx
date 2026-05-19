@@ -1,5 +1,6 @@
 import React from 'react';
 import { Project, Experience } from './types';
+import Typewriter from './components/Typewriter';
 
 export const SOCIAL_LINKS = [
   { name: 'Instagram', url: 'https://www.instagram.com/the1nonly.angad/', icon: 'Instagram' },
@@ -55,15 +56,18 @@ export const WELCOME_MSG = (
     <div className="text-neonGreen text-lg md:text-xl font-bold border-b border-neonGreen/20 pb-2 w-fit animate-fade-in" style={{ animationDelay: '0.1s' }}>
       &gt; Jack of all trades, master of some
     </div>
-    <p className="text-gray-300 max-w-2xl leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
-      Welcome to my interactive terminal. I write code, build hardware, and solve complex problems using whatever tools the job requires.
+    <div className="text-gray-300 max-w-2xl leading-relaxed animate-fade-in min-h-[5rem]" style={{ animationDelay: '0.2s' }}>
+      <Typewriter 
+        text="System connection established. Welcome to my interactive node. I engineer software, hack hardware, and architect solutions across the full stack—using whatever exploits or tools are necessary to get the system online." 
+        delay={25} 
+      />
       <br />
-      <span className="inline-block mt-2">
+      <span className="inline-block mt-4 animate-fade-in opacity-0" style={{ animationDelay: '4s', animationFillMode: 'forwards' }}>
         <button className="text-neonGreen hover:text-mint hover:underline decoration-mint decoration-2 underline-offset-4 cursor-pointer transition-all">
           Explore the Terminal
         </button>
       </span>
-    </p>
+    </div>
     
     <div className="mt-6 grid gap-2 animate-fade-in" style={{ animationDelay: '0.3s' }}>
       <div className="text-gray-400 text-sm mb-2">Available Commands:</div>
@@ -74,7 +78,6 @@ export const WELCOME_MSG = (
           { id: '3', cmd: 'open work', desc: 'View projects' },
           { id: '4', cmd: 'cat skills.txt', desc: 'View tech & hardware stack' },
           { id: '5', cmd: 'run contactMe', desc: 'Send a message' },
-          { id: '6', cmd: 'run snakeGame', desc: 'Play Snake' },
         ].map((item) => (
           <div key={item.id} className="font-mono text-sm group cursor-pointer">
             <span className="text-mustard mr-2">[{item.id}]</span>

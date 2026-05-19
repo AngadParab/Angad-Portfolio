@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Terminal, { TerminalRef } from './components/Terminal';
+import StandardPortfolio from './components/StandardPortfolio';
 import Badge from './components/Badge';
 import BackgroundNetwork from './components/BackgroundNetwork';
 import SystemHUD from './components/SystemHUD';
@@ -17,29 +18,35 @@ const IconMap: Record<string, any> = {
 
 const App: React.FC = () => {
   const terminalRef = useRef<TerminalRef>(null);
+  const [viewMode, setViewMode] = useState<'terminal' | 'standard'>('terminal');
 
-  const handleNavClick = (cmd: string) => {
-    terminalRef.current?.executeCommand(cmd);
+  const handleNavClick = (cmd: string, sectionId: string) => {
+    if (viewMode === 'terminal') {
+      terminalRef.current?.executeCommand(cmd);
+    } else {
+      const el = document.getElementById(sectionId);
+      el?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row overflow-hidden bg-[#0B0F19] relative cursor-none">
+    <div className={`h-screen w-full flex flex-col md:flex-row bg-pageBg relative cursor-none ${viewMode === 'terminal' ? 'overflow-hidden' : 'overflow-x-hidden overflow-y-auto'}`}>
       <CustomCursor />
       <BackgroundNetwork />
       <SystemHUD />
       <SpotifyWidget />
       <Badge />
-      {/* Top Nav (Absolute on Desktop) */}
-      <nav className="absolute top-0 right-0 p-6 z-50 hidden md:flex gap-8">
+      {/* Top Nav (Fixed on Desktop) */}
+      <nav className="fixed top-0 right-0 p-6 z-50 hidden md:flex gap-8 items-center bg-pageBg/80 backdrop-blur-sm rounded-bl-xl border-b border-l border-divider">
         {[
-          { id: '1', label: 'About', cmd: 'open aboutMe' },
-          { id: '2', label: 'Experience', cmd: 'open experience' },
-          { id: '3', label: 'Work', cmd: 'open work' },
-          { id: '4', label: 'Contact Me', cmd: 'run contactMe' },
+          { id: '1', label: 'About', cmd: 'open aboutMe', sectionId: 'about' },
+          { id: '2', label: 'Experience', cmd: 'open experience', sectionId: 'experience' },
+          { id: '3', label: 'Work', cmd: 'open work', sectionId: 'work' },
+          { id: '4', label: 'Contact Me', cmd: 'run contactMe', sectionId: 'contact' },
         ].map((item) => (
           <button
             key={item.id}
-            onClick={() => handleNavClick(item.cmd)}
+            onClick={() => handleNavClick(item.cmd, item.sectionId)}
             className="font-mono text-sm text-gray-400 hover:text-neonGreen group transition-colors relative"
           >
             <span className="text-mustard mr-1">[{item.id}]</span>
@@ -47,25 +54,39 @@ const App: React.FC = () => {
             <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-mint group-hover:w-full transition-all duration-300"></span>
           </button>
         ))}
+        {/* Toggle Mode Button */}
+        <button
+          onClick={() => setViewMode(prev => prev === 'terminal' ? 'standard' : 'terminal')}
+          className="ml-4 px-3 py-1 border border-termBorder text-xs text-gray-400 hover:text-white hover:border-white rounded font-mono transition-colors"
+        >
+          {viewMode === 'terminal' ? 'Standard View' : 'Terminal View'}
+        </button>
       </nav>
 
       {/* Mobile Nav (Bottom Bar - Simplified) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-pageBg/90 backdrop-blur border-t border-divider z-50 flex justify-around p-4">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-pageBg/90 backdrop-blur border-t border-divider z-50 flex justify-around p-4 items-center">
         {[
-          { id: '1', label: 'Abt', cmd: 'open aboutMe' },
-          { id: '2', label: 'Exp', cmd: 'open experience' },
-          { id: '3', label: 'Wrk', cmd: 'open work' },
-          { id: '4', label: 'Msg', cmd: 'run contactMe' },
+          { id: '1', label: 'Abt', cmd: 'open aboutMe', sectionId: 'about' },
+          { id: '2', label: 'Exp', cmd: 'open experience', sectionId: 'experience' },
+          { id: '3', label: 'Wrk', cmd: 'open work', sectionId: 'work' },
+          { id: '4', label: 'Msg', cmd: 'run contactMe', sectionId: 'contact' },
         ].map(item => (
           <button
             key={item.id}
-            onClick={() => handleNavClick(item.cmd)}
+            onClick={() => handleNavClick(item.cmd, item.sectionId)}
             className="flex flex-col items-center text-[10px] font-mono text-gray-400 active:text-neonGreen"
           >
             <span className="text-mustard text-xs">[{item.id}]</span>
             {item.label}
           </button>
         ))}
+        <button
+          onClick={() => setViewMode(prev => prev === 'terminal' ? 'standard' : 'terminal')}
+          className="flex flex-col items-center text-[10px] font-mono text-mint"
+        >
+          <span className="text-mustard text-xs">[T]</span>
+          Toggle
+        </button>
       </nav>
 
       {/* Left Sidebar: Socials */}
@@ -91,8 +112,12 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex items-center justify-center p-4 md:p-8 lg:p-12 relative z-10">
-        <Terminal ref={terminalRef} />
+      <main className="flex-1 flex items-center justify-center p-4 md:p-8 lg:p-12 relative z-10 w-full mt-12 md:mt-0 mb-16 md:mb-0">
+        {viewMode === 'terminal' ? (
+          <Terminal ref={terminalRef} onClose={() => setViewMode('standard')} />
+        ) : (
+          <StandardPortfolio />
+        )}
       </main>
 
       {/* Right Sidebar: Email */}

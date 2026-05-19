@@ -64,7 +64,7 @@ const BackgroundNetwork: React.FC = () => {
             // Opacity based on distance
             const opacity = 1 - distance / connectionDistance;
             // Mix of cyan and neon green
-            ctx.strokeStyle = `rgba(158, 240, 26, ${opacity * 0.25})`; 
+            ctx.strokeStyle = `rgba(0, 255, 65, ${opacity * 0.25})`; 
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }

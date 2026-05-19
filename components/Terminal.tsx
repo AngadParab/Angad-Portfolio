@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { TerminalLine, Project, Experience } from '../types';
 import { PROJECTS, EXPERIENCE, WELCOME_MSG } from '../constants';
-import SnakeGame from './SnakeGame';
 import Badge from './Badge';
 import { Send, Terminal as TermIcon, X, Plus } from 'lucide-react';
 
@@ -12,18 +11,30 @@ const FormattedText = ({ text }: { text: string }) => {
   );
 };
 
+const TerminalPrompt = () => (
+  <span className="shrink-0 flex items-center gap-0 tracking-tight select-none">
+    <span className="text-neonGreen font-bold">angad@linux</span>
+    <span className="text-white">:</span>
+    <span className="text-[#3b8eea] font-bold">~</span>
+    <span className="text-white mr-2">$</span>
+  </span>
+);
+
 export interface TerminalRef {
   executeCommand: (cmd: string) => void;
 }
 
-const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
+export interface TerminalProps {
+  onClose?: () => void;
+}
+
+const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose }, ref) => {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState<TerminalLine[]>([
     { id: 'init', type: 'component', content: WELCOME_MSG }
   ]);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [isGameActive, setIsGameActive] = useState(false);
 
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -34,7 +45,7 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [output, isGameActive]);
+  }, [output]);
 
   // Focus input on click anywhere in terminal
   const handleTerminalClick = () => {
@@ -79,22 +90,37 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
           command === '3' || command === '[3]' ? 'open work' :
             command === '4' || command === '[4]' ? 'cat skills.txt' :
               command === '5' || command === '[5]' ? 'run contactme' :
-                command === '6' || command === '[6]' ? 'run snakegame' :
-                  command;
+                command;
 
     if (normalizedCmd.includes('open aboutme')) {
       response = createResponse(
         <div className="max-w-2xl space-y-2 animate-fade-in">
           <h3 className="text-mustard font-bold text-lg">User: Angad Parab</h3>
           <div className="space-y-4">
-            <p className="text-xl text-white font-bold tracking-wide">
-              I don't limit myself to a single tech stack or discipline.
+            <p className="text-xl text-white font-bold tracking-wide leading-relaxed">
+              I learn like a scientist:<br/>
+              <span className="text-neonGreen">observe, experiment, break, rebuild, improve.</span>
             </p>
             <p className="text-gray-300 leading-relaxed">
-              To me, technology is just a toolkit. Whether a project requires writing scalable backend code, soldering custom hardware, or designing an intuitive UI , I will figure out exactly what's needed to solve the problem.
+              I'm a naturally curious mind who loves understanding how things work—whether it’s technology, design, human behavior, or the hidden mechanics behind everyday systems. My goal isn’t to master one field, but to connect ideas across many of them and create something meaningful.
             </p>
             <p className="text-gray-300 leading-relaxed">
-              I pride myself on being a <span className="text-neonGreen">Jack of all trades, master of some</span>. I bridge the gaps between different disciplines to build things that actually work.
+              Early exposure to real-world projects and corporate environments helped me sharpen my problem-solving, analytical, and communication skills. I enjoy diving deep into a topic, asking questions, and figuring out how things can be improved or redesigned. For me, learning is not a phase… it’s a habit.
+            </p>
+            
+            <div className="my-4 border-l-2 border-neonGreen/50 pl-4 py-2 bg-neonGreen/5 rounded-r">
+              <h4 className="text-mustard font-bold text-sm mb-2 uppercase tracking-wider">Some areas I experiment with:</h4>
+              <ul className="space-y-1.5 text-sm text-gray-300">
+                <li className="flex items-start gap-2"><span className="text-mint shrink-0 mt-0.5">▹</span> <span>Software, AI concepts & automation</span></li>
+                <li className="flex items-start gap-2"><span className="text-mint shrink-0 mt-0.5">▹</span> <span>XR, robotics, and interactive technologies</span></li>
+                <li className="flex items-start gap-2"><span className="text-mint shrink-0 mt-0.5">▹</span> <span>UI/UX, design thinking & 3D modeling</span></li>
+                <li className="flex items-start gap-2"><span className="text-mint shrink-0 mt-0.5">▹</span> <span>Personal development, observation & creativity</span></li>
+                <li className="flex items-start gap-2"><span className="text-mint shrink-0 mt-0.5">▹</span> <span>Anything new that pushes my curiosity further</span></li>
+              </ul>
+            </div>
+
+            <p className="text-gray-300 leading-relaxed">
+              I believe that innovation comes from connecting ideas across different worlds—tech, design, science, creativity, and human behavior. My long-term aim is to stay curious, think boldly, experiment fearlessly, and contribute to ideas that push the world forward.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-4 text-sm border-t border-dashed border-divider pt-4">
@@ -218,14 +244,9 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
           </form>
         </div>
       );
-    } else if (normalizedCmd.includes('run snakegame')) {
-      setIsGameActive(true);
-      response = createResponse(
-        <SnakeGame onClose={() => {
-          setIsGameActive(false);
-          setOutput(prev => [...prev, { id: Date.now().toString(), type: 'output', content: <span className="text-yellow-500">Game session terminated.</span> }]);
-        }} />
-      );
+    } else if (normalizedCmd === 'exit') {
+      if (onClose) onClose();
+      return;
     } else if (normalizedCmd === 'clear') {
       setOutput([]);
       return;
@@ -238,7 +259,6 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
             <li><span className="text-mustard">open experience</span> - Work history</li>
             <li><span className="text-mustard">open work</span> - Projects</li>
             <li><span className="text-mustard">run contactMe</span> - Email form</li>
-            <li><span className="text-mustard">run snakeGame</span> - Play game</li>
             <li><span className="text-mustard">clear</span> - Clear terminal</li>
           </ul>
         </div>
@@ -283,10 +303,7 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
   // Expose method to parent
   useImperativeHandle(ref, () => ({
     executeCommand: (cmd: string) => {
-      // Only execute if game is not active to avoid confusion
-      if (!isGameActive) {
-        processCommand(cmd);
-      }
+      processCommand(cmd);
     }
   }));
 
@@ -298,12 +315,13 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
       {/* Terminal Title Bar */}
       <div className="bg-termHeader h-8 md:h-10 flex items-center px-4 flex-shrink-0 border-b border-termBorder relative">
         <div className="flex gap-2 items-center absolute left-4">
-          <X size={14} className="text-white/70 cursor-pointer hover:text-white" />
-          <Plus size={14} className="text-white/70 cursor-pointer hover:text-white" />
+          <div onClick={onClose} className="w-3 h-3 rounded-full bg-[#ff5f56] hover:bg-[#ff5f56]/80 cursor-pointer shadow-sm transition-colors" title="Close Terminal"></div>
+          <div className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:bg-[#ffbd2e]/80 cursor-pointer shadow-sm"></div>
+          <div className="w-3 h-3 rounded-full bg-[#27c93f] hover:bg-[#27c93f]/80 cursor-pointer shadow-sm"></div>
         </div>
-        <div className="mx-auto text-xs md:text-sm font-mono text-white/90 flex items-center gap-2 select-none">
-          <TermIcon size={12} />
-          <span>angad@parab:~</span>
+        <div className="mx-auto text-xs md:text-sm font-mono text-gray-400 flex items-center gap-2 select-none">
+          <TermIcon size={14} className="text-gray-500" />
+          <span>angad@linux-desktop:~</span>
         </div>
       </div>
 
@@ -317,8 +335,8 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
           {output.map((line) => (
             <div key={line.id} className="mb-3 break-words">
               {line.type === 'input' ? (
-                <div className="flex flex-wrap gap-2 text-gray-400">
-                  <span className="text-neonGreen">angad@parab:~$</span>
+                <div className="flex flex-wrap items-center gap-0 text-gray-400">
+                  <TerminalPrompt />
                   <span className="text-white">{line.content}</span>
                 </div>
               ) : (
@@ -330,29 +348,27 @@ const Terminal = forwardRef<TerminalRef, {}>((props, ref) => {
           ))}
 
           {/* Active Input Line */}
-          {!isGameActive && (
-            <div className="flex items-center gap-2 text-neonGreen mt-4">
-              <span className="shrink-0">angad@parab:~$</span>
-              <div className="relative flex-1">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="w-full bg-transparent border-none outline-none text-white font-mono caret-transparent"
-                  autoComplete="off"
-                  spellCheck="false"
-                  autoFocus
-                />
-                {/* Custom Blinking Caret */}
-                <div
-                  className="absolute top-0 pointer-events-none bg-neonGreen w-2.5 h-5 animate-caret-blink"
-                  style={{ left: `${input.length}ch` }}
-                ></div>
-              </div>
+          <div className="flex items-center gap-0 mt-4">
+            <TerminalPrompt />
+            <div className="relative flex-1">
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full bg-transparent border-none outline-none text-white font-mono caret-transparent"
+                autoComplete="off"
+                spellCheck="false"
+                autoFocus
+              />
+              {/* Custom Blinking Caret */}
+              <div
+                className="absolute top-0 pointer-events-none bg-neonGreen w-2.5 h-5 animate-caret-blink"
+                style={{ left: `${input.length}ch` }}
+              ></div>
             </div>
-          )}
+          </div>
           <div ref={endRef} className="h-4" />
         </div>
       </div>
