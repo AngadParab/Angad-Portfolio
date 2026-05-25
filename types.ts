@@ -13,6 +13,7 @@ export interface TerminalLine {
   type: 'input' | 'output' | 'component';
   content: React.ReactNode | string;
   timestamp?: number;
+  context?: 'main' | 'whoami' | 'education';
 }
 
 export interface CommandConfig {
@@ -29,6 +30,8 @@ export interface Project {
   tags: string[];
   link: string;
   image: string;
+  github?: string;
+  previewable?: boolean;
 }
 
 export interface Experience {
@@ -36,4 +39,16 @@ export interface Experience {
   company: string;
   period: string;
   description: string;
+  certificate?: string;
 }
+
+export interface Workshop {
+  title: string;
+  organizer: string;
+  period: string;
+  description: string;
+  certificate?: string;
+  role?: string;
+  grade?: string;
+}
+

@@ -21,7 +21,7 @@ useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e538
 
 export default function Badge() {
   return (
-    <div className="absolute top-0 left-8 md:left-16 lg:left-24 w-[350px] h-[650px] z-[60] pointer-events-none hidden md:block">
+    <div className="absolute top-0 left-8 md:left-16 lg:left-24 w-[450px] h-[800px] z-[60] pointer-events-none hidden md:block">
       <Canvas camera={{ position: [0, 0, 13], fov: 25 }} className="pointer-events-auto">
         <ambientLight intensity={Math.PI} />
         <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
@@ -122,7 +122,7 @@ function Band({ maxSpeed = 50, minSpeed = 10 }) {
         <RigidBody position={[1.2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
-            scale={2.25}
+            scale={2.8}
             position={[0, -1.2, -0.05]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}

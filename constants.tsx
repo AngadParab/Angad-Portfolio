@@ -1,5 +1,5 @@
 import React from 'react';
-import { Project, Experience } from './types';
+import { Project, Experience, Workshop } from './types';
 import Typewriter from './components/Typewriter';
 
 export const SOCIAL_LINKS = [
@@ -11,40 +11,97 @@ export const SOCIAL_LINKS = [
 
 export const PROJECTS: Project[] = [
   {
-    title: "Software Architecture & Web Apps",
-    description: "Building scalable, high-performance web applications using modern frameworks like React, Node.js, and TypeScript. Turning complex problems into elegant user interfaces.",
-    tags: ["React", "TypeScript", "Node.js"],
-    link: "https://github.com/AngadParab",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    title: "Cyber Ranger",
+    description: "A community-driven cyber awareness initiative for Goa, empowering citizens to become cyber ambassadors. Features structured safety courses, real-time threat alerts, a secure password strength analyzer, and a custom Botpress AI assistant to educate against phishing, UPI fraud, and online scams.",
+    tags: ["HTML5", "TailwindCSS", "JavaScript", "Firebase", "Botpress AI"],
+    link: "https://cyber-ranger.web.app/",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    github: "https://github.com/AngadParab/CYBER-RANGER.git",
+    previewable: true
   },
   {
-    title: "Hardware Tinkering & IoT",
-    description: "Bridging the gap between the physical and digital worlds. Experimenting with microcontrollers, sensors, and low-level programming to build interactive hardware.",
-    tags: ["Arduino", "C++", "Sensors"],
-    link: "https://github.com/AngadParab",
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    title: "PlayMeet",
+    description: "A full-stack matchmaking and event management platform bridging physical sports and competitive esports. Features dual-ecosystem profile tracking, a unified global points economy and rewards store, real-time WebSocket messaging, dynamic leaderboards, and automated tournament brackets.",
+    tags: ["MongoDB", "Express", "React", "Node.js", "Socket.io", "TailwindCSS", "Redis"],
+    link: "https://playmeet-seven.vercel.app/",
+    image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    github: "https://github.com/AngadParab/playmeet.git",
+    previewable: true
   },
   {
-    title: "Digital Design & Media",
-    description: "Exploring the creative side of technology. Crafting 3D visuals, editing media, and designing intuitive user experiences that captivate and engage.",
-    tags: ["Design", "3D Modeling", "Video"],
-    link: "https://github.com/AngadParab",
-    image: "https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    title: "SnapSort",
+    description: "A high-performance native Android utility designed to resolve mobile storage bloat. It recursively scans directories like DCIM or Downloads, reads chronological media metadata, and performs file-system-level moves in milliseconds using Storage Access Framework (SAF) and DocumentsContract API.",
+    tags: ["Kotlin", "Jetpack Compose", "Coroutines", "SAF API", "Android SDK"],
+    link: "https://github.com/AngadParab/SnapSort",
+    image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    github: "https://github.com/AngadParab/SnapSort.git",
+    previewable: false
+  },
+  {
+    title: "College Navigation Kiosk",
+    description: "An interactive navigation and visitor check-in kiosk built for GCASQC Goa. Integrates a touch-screen professor directory, visitor check-in flow with Telegram alerts, SQLite data storage, and a serial hardware bridge connected to an ESP32 microcontroller for physical proximity wake-up.",
+    tags: ["Python", "Flask", "SQLite", "HTML/CSS/JS", "IoT", "ESP32"],
+    link: "https://github.com/AngadParab/College-Navigation-Kiosk",
+    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    github: "https://github.com/AngadParab/College-Navigation-Kiosk.git",
+    previewable: false
   }
 ];
 
 export const EXPERIENCE: Experience[] = [
   {
-    role: "Independent Creator & Technologist",
-    company: "Self-Employed",
-    period: "Ongoing",
-    description: "Diving into various disciplines from frontend engineering to hardware hacking. Continuously learning new tools to build whatever idea comes to mind."
+    role: "Lenovo Leap WD Internship",
+    company: "Lenovo",
+    period: "2024",
+    description: "Completed the Lenovo Leap WD Internship program, gaining hands-on experience and insights into the tech industry.",
+    certificate: "/lenovo-internship.jpg"
+  }
+];
+
+export const WORKSHOPS: Workshop[] = [
+  {
+    title: "BootCamp Training on Drone Design and Electronics",
+    organizer: "C-DAC (Centre for Development of Advanced Computing), Bengaluru",
+    period: "Oct 13 - 17, 2025",
+    description: "An intensive state-level training program on drone aerodynamics, assembly, electrical components calibration, and microcontrollers. Passed assessment with 'C' grade.",
+    certificate: "/workshops/IMG_20260524_104058.jpg",
+    grade: "C"
   },
   {
-    role: "Software Developer",
-    company: "Various Projects",
-    period: "2020 - Present",
-    description: "Developed end-to-end web applications and scripts. Specialized in finding pragmatic solutions to complex problems, regardless of the technology stack."
+    title: "Cyber Crimes and Digital Hygiene Awareness Session",
+    organizer: "Government College of Arts, Science and Commerce, Quepem, Goa",
+    period: "2025",
+    description: "Conducted an educational workshop as a guest speaker ('Cyber Yoddha') in association with Goa Police to train students in recognizing financial fraud, phishing, and securing digital accounts.",
+    certificate: "/workshops/IMG_20260524_104108.jpg",
+    role: "Speaker / Cyber Yoddha"
+  },
+  {
+    title: "Computational Chemistry & Drug Design (Winter School)",
+    organizer: "Goa College of Pharmacy (Supported by GSRF)",
+    period: "Nov 24 - 28, 2025",
+    description: "Attended a hands-on winter school exploring molecular modeling, docking platforms, and computational chemistry tools to design therapeutically active small molecules.",
+    certificate: "/workshops/IMG_0320.jpg"
+  },
+  {
+    title: "Computational Linguistics state-level workshop",
+    organizer: "Directorate of Higher Education, Govt. of Goa",
+    period: "Oct 3, 2025",
+    description: "Participated in an academic seminar focused on corpus development, morphological analysis, NLP applications, and technology career pathways in language research.",
+    certificate: "/workshops/IMG_20260524_104524.jpg"
+  },
+  {
+    title: "Cyber Security & Ethical Hacking state-level workshop",
+    organizer: "SPES's Goa Multi-Faculty College, Dharbandora-Goa",
+    period: "March 13 - 14, 2026",
+    description: "Engaged in hands-on labs for Wi-Fi penetration testing, network sniffing, SQL injection, system vulnerabilities assessment, and threat mitigation strategies.",
+    certificate: "/workshops/IMG_20260524_104501.jpg"
+  },
+  {
+    title: "Sentiment Analysis & Social Media Analytics national-level seminar",
+    organizer: "Rosary College of Commerce & Arts, Navelim, Goa",
+    period: "Feb 19, 2024",
+    description: "Explored opinions mining methodologies, natural language processing pipelines, feature extraction models, and analytics workflows for social media platforms.",
+    certificate: "/workshops/IMG_20260524_104513.jpg"
   }
 ];
 
@@ -73,11 +130,11 @@ export const WELCOME_MSG = (
       <div className="text-gray-400 text-sm mb-2">Available Commands:</div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-xl">
         {[
-          { id: '1', cmd: 'open aboutMe', desc: 'Opens about me' },
-          { id: '2', cmd: 'open experience', desc: 'View career path' },
-          { id: '3', cmd: 'open work', desc: 'View projects' },
-          { id: '4', cmd: 'cat skills.txt', desc: 'View tech & hardware stack' },
-          { id: '5', cmd: 'run contactMe', desc: 'Send a message' },
+          { id: '1', cmd: 'whoami', desc: 'Opens about me' },
+          { id: '2', cmd: 'cd education', desc: 'View education & skills' },
+          { id: '3', cmd: 'ls projects', desc: 'View projects' },
+          { id: '4', cmd: 'ping', desc: 'Send a message' },
+          { id: '5', cmd: 'get resume', desc: 'Download Resume' },
         ].map((item) => (
           <div key={item.id} className="font-mono text-sm group cursor-pointer">
             <span className="text-mustard mr-2">[{item.id}]</span>

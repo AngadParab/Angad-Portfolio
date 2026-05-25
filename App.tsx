@@ -39,10 +39,10 @@ const App: React.FC = () => {
       {/* Top Nav (Fixed on Desktop) */}
       <nav className="fixed top-0 right-0 p-6 z-50 hidden md:flex gap-8 items-center bg-pageBg/80 backdrop-blur-sm rounded-bl-xl border-b border-l border-divider">
         {[
-          { id: '1', label: 'About', cmd: 'open aboutMe', sectionId: 'about' },
-          { id: '2', label: 'Experience', cmd: 'open experience', sectionId: 'experience' },
-          { id: '3', label: 'Work', cmd: 'open work', sectionId: 'work' },
-          { id: '4', label: 'Contact Me', cmd: 'run contactMe', sectionId: 'contact' },
+          { id: '1', label: 'About', cmd: 'whoami', sectionId: 'about' },
+          { id: '2', label: 'Education', cmd: 'cd education', sectionId: 'education-workshops' },
+          { id: '3', label: 'Work', cmd: 'ls projects', sectionId: 'work' },
+          { id: '4', label: 'Contact Me', cmd: 'ping', sectionId: 'contact' },
         ].map((item) => (
           <button
             key={item.id}
@@ -66,10 +66,10 @@ const App: React.FC = () => {
       {/* Mobile Nav (Bottom Bar - Simplified) */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-pageBg/90 backdrop-blur border-t border-divider z-50 flex justify-around p-4 items-center">
         {[
-          { id: '1', label: 'Abt', cmd: 'open aboutMe', sectionId: 'about' },
-          { id: '2', label: 'Exp', cmd: 'open experience', sectionId: 'experience' },
-          { id: '3', label: 'Wrk', cmd: 'open work', sectionId: 'work' },
-          { id: '4', label: 'Msg', cmd: 'run contactMe', sectionId: 'contact' },
+          { id: '1', label: 'Abt', cmd: 'whoami', sectionId: 'about' },
+          { id: '2', label: 'Edu', cmd: 'cd education', sectionId: 'education-workshops' },
+          { id: '3', label: 'Wrk', cmd: 'ls projects', sectionId: 'work' },
+          { id: '4', label: 'Msg', cmd: 'ping', sectionId: 'contact' },
         ].map(item => (
           <button
             key={item.id}
