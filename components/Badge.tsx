@@ -20,8 +20,21 @@ useGLTF.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hc
 useTexture.preload('https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/SOT1hmCesOHxEYxL7vkoZ/c57b29c85912047c414311723320c16b/band.jpg');
 
 export default function Badge() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1280);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (!isDesktop) return null;
+
   return (
-    <div className="absolute top-0 left-8 md:left-16 lg:left-24 w-[450px] h-[800px] z-[60] pointer-events-none hidden md:block">
+    <div className="relative w-[380px] h-[680px] shrink-0 z-[60] pointer-events-none hidden xl:block">
       <Canvas camera={{ position: [0, 0, 13], fov: 25 }} className="pointer-events-auto">
         <ambientLight intensity={Math.PI} />
         <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>

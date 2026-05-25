@@ -35,62 +35,51 @@ const App: React.FC = () => {
       <BackgroundNetwork />
       <SystemHUD />
       <SpotifyWidget />
-      <Badge />
       {/* Top Nav (Fixed on Desktop) */}
-      <nav className="fixed top-0 right-0 p-6 z-50 hidden md:flex gap-8 items-center bg-pageBg/80 backdrop-blur-sm rounded-bl-xl border-b border-l border-divider">
-        {[
-          { id: '1', label: 'About', cmd: 'whoami', sectionId: 'about' },
-          { id: '2', label: 'Education', cmd: 'cd education', sectionId: 'education-workshops' },
-          { id: '3', label: 'Work', cmd: 'ls projects', sectionId: 'work' },
-          { id: '4', label: 'Contact Me', cmd: 'ping', sectionId: 'contact' },
-        ].map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleNavClick(item.cmd, item.sectionId)}
-            className="font-mono text-sm text-gray-400 hover:text-neonGreen group transition-colors relative"
-          >
-            <span className="text-mustard mr-1">[{item.id}]</span>
-            {item.label}
-            <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-mint group-hover:w-full transition-all duration-300"></span>
-          </button>
-        ))}
-        {/* Toggle Mode Button */}
-        <button
-          onClick={() => setViewMode(prev => prev === 'terminal' ? 'standard' : 'terminal')}
-          className="ml-4 px-3 py-1 border border-termBorder text-xs text-gray-400 hover:text-white hover:border-white rounded font-mono transition-colors"
-        >
-          {viewMode === 'terminal' ? 'Standard View' : 'Terminal View'}
-        </button>
-      </nav>
+      {viewMode === 'terminal' && (
+        <nav className="fixed top-0 right-0 p-6 z-50 hidden md:flex gap-8 items-center bg-pageBg/80 backdrop-blur-sm rounded-bl-xl border-b border-l border-divider">
+          {[
+            { id: '1', label: 'About', cmd: 'whoami', sectionId: 'about' },
+            { id: '2', label: 'Education', cmd: 'cd education', sectionId: 'education-workshops' },
+            { id: '3', label: 'Work', cmd: 'ls projects', sectionId: 'work' },
+            { id: '4', label: 'Contact Me', cmd: 'ping', sectionId: 'contact' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleNavClick(item.cmd, item.sectionId)}
+              className="font-mono text-sm text-gray-400 hover:text-neonGreen group transition-colors relative"
+            >
+              <span className="text-mustard mr-1">[{item.id}]</span>
+              {item.label}
+              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-mint group-hover:w-full transition-all duration-300"></span>
+            </button>
+          ))}
+        </nav>
+      )}
 
       {/* Mobile Nav (Bottom Bar - Simplified) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-pageBg/90 backdrop-blur border-t border-divider z-50 flex justify-around p-4 items-center">
-        {[
-          { id: '1', label: 'Abt', cmd: 'whoami', sectionId: 'about' },
-          { id: '2', label: 'Edu', cmd: 'cd education', sectionId: 'education-workshops' },
-          { id: '3', label: 'Wrk', cmd: 'ls projects', sectionId: 'work' },
-          { id: '4', label: 'Msg', cmd: 'ping', sectionId: 'contact' },
-        ].map(item => (
-          <button
-            key={item.id}
-            onClick={() => handleNavClick(item.cmd, item.sectionId)}
-            className="flex flex-col items-center text-[10px] font-mono text-gray-400 active:text-neonGreen"
-          >
-            <span className="text-mustard text-xs">[{item.id}]</span>
-            {item.label}
-          </button>
-        ))}
-        <button
-          onClick={() => setViewMode(prev => prev === 'terminal' ? 'standard' : 'terminal')}
-          className="flex flex-col items-center text-[10px] font-mono text-mint"
-        >
-          <span className="text-mustard text-xs">[T]</span>
-          Toggle
-        </button>
-      </nav>
+      {viewMode === 'terminal' && (
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-pageBg/90 backdrop-blur border-t border-divider z-50 flex justify-around p-4 items-center">
+          {[
+            { id: '1', label: 'Abt', cmd: 'whoami', sectionId: 'about' },
+            { id: '2', label: 'Edu', cmd: 'cd education', sectionId: 'education-workshops' },
+            { id: '3', label: 'Wrk', cmd: 'ls projects', sectionId: 'work' },
+            { id: '4', label: 'Msg', cmd: 'ping', sectionId: 'contact' },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => handleNavClick(item.cmd, item.sectionId)}
+              className="flex flex-col items-center text-[10px] font-mono text-gray-400 active:text-neonGreen"
+            >
+              <span className="text-mustard text-xs">[{item.id}]</span>
+              {item.label}
+            </button>
+          ))}
+        </nav>
+      )}
 
       {/* Left Sidebar: Socials */}
-      <aside className="hidden md:flex w-20 flex-col items-center justify-center gap-6 border-r border-divider/10 relative z-20">
+      <aside className="hidden lg:flex w-20 flex-col items-center justify-center gap-6 border-r border-divider/10 relative z-20">
         <div className="flex flex-col items-center gap-6">
           {SOCIAL_LINKS.map((link) => {
             const Icon = IconMap[link.icon];
@@ -112,16 +101,19 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex items-center justify-center p-4 md:p-8 lg:p-12 relative z-10 w-full mt-12 md:mt-0 mb-16 md:mb-0">
+      <main className={`flex-1 flex items-center justify-center p-4 md:p-8 lg:p-12 relative z-10 w-full ${viewMode === 'terminal' ? 'mt-12 md:mt-0 mb-16 md:mb-0' : 'mt-0 mb-0'}`}>
         {viewMode === 'terminal' ? (
-          <Terminal ref={terminalRef} onClose={() => setViewMode('standard')} />
+          <div className="flex flex-row items-center justify-center gap-12 w-full max-w-7xl mx-auto">
+            <Badge />
+            <Terminal ref={terminalRef} onClose={() => setViewMode('standard')} />
+          </div>
         ) : (
-          <StandardPortfolio />
+          <StandardPortfolio onSwitchToTerminal={() => setViewMode('terminal')} />
         )}
       </main>
 
       {/* Right Sidebar: Email */}
-      <aside className="hidden md:flex w-16 flex-col items-center justify-center border-l border-divider/10 relative z-20">
+      <aside className="hidden lg:flex w-16 flex-col items-center justify-center border-l border-divider/10 relative z-20">
         <div className="h-full flex flex-col items-center justify-center gap-4">
           <div className="w-[1px] h-32 bg-divider"></div>
           <a

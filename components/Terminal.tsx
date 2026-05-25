@@ -717,9 +717,10 @@ export interface TerminalRef {
 
 export interface TerminalProps {
   onClose?: () => void;
+  initialCommand?: string;
 }
 
-const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose }, ref) => {
+const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialCommand }, ref) => {
   const [context, setContext] = useState<'main' | 'whoami' | 'education'>('main');
   const [isHacking, setIsHacking] = useState(false);
   const [input, setInput] = useState('');
@@ -739,6 +740,12 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose }, ref) => {
   useEffect(() => {
     scrollToBottom();
   }, [output]);
+
+  useEffect(() => {
+    if (initialCommand) {
+      processCommand(initialCommand);
+    }
+  }, [initialCommand]);
 
   // Focus input on click anywhere in terminal
   const handleTerminalClick = () => {
@@ -1058,7 +1065,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose }, ref) => {
 
   return (
     <div
-      className="relative w-full max-w-5xl mx-auto h-[80vh] md:h-[750px] flex flex-col rounded-xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-termBorder/50"
+      className="relative w-full max-w-5xl mx-auto h-[80vh] md:h-[80vh] lg:h-[75vh] max-h-[750px] flex flex-col rounded-xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-termBorder/50"
       onClick={handleTerminalClick}
     >
       {/* Terminal Title Bar */}

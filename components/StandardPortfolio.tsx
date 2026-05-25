@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { PROJECTS, EXPERIENCE, WORKSHOPS } from '../constants';
+import TerminalWindow from './Terminal';
 import { 
   Send, 
-  Terminal, 
+  Terminal as TermIcon, 
   Code2, 
   Cpu, 
   Sparkles, 
@@ -19,7 +20,12 @@ import {
   Palette
 } from 'lucide-react';
 
-const StandardPortfolio: React.FC = () => {
+interface StandardPortfolioProps {
+  onSwitchToTerminal: () => void;
+}
+
+const StandardPortfolio: React.FC<StandardPortfolioProps> = ({ onSwitchToTerminal }) => {
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [activeSkillTab, setActiveSkillTab] = useState<'software' | 'hardware' | 'design'>('software');
   const [projectFilter, setProjectFilter] = useState<string>('ALL');
 
@@ -51,14 +57,118 @@ const StandardPortfolio: React.FC = () => {
     ]
   };
 
+  const smoothScrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="w-full max-w-7xl mx-auto h-full p-4 md:p-8 font-mono animate-fade-in relative z-20 pb-24">
+    <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 font-mono text-gray-300 relative z-20 pb-24 px-4 md:px-8">
       
       {/* 🚀 SCI-FI GLOW OVERLAYS */}
       <div className="absolute top-10 left-10 w-96 h-96 bg-neonGreen/5 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-pixelPink/5 rounded-full blur-[150px] pointer-events-none"></div>
-      
-      <div className="space-y-8">
+
+      {/* ====================================================
+          DESKTOP & MOBILE SHORTCUT SIDEBAR/NAVBAR
+         ==================================================== */}
+      <aside className="w-full lg:w-32 shrink-0 p-3 lg:p-8 flex flex-row lg:flex-col gap-4 lg:gap-8 justify-around lg:justify-start items-center border border-white/[0.08] bg-black/85 lg:bg-black/60 backdrop-blur-md lg:backdrop-blur-sm rounded-2xl lg:rounded-3xl sticky top-2 lg:top-24 h-fit z-30 select-none overflow-x-auto lg:overflow-visible">
+        
+        {/* About Icon (Opens About Terminal in Window Overlay) */}
+        <button
+          onClick={() => setIsTerminalOpen(true)}
+          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="bg-[#fbd971]/10 p-2 lg:p-2.5 border border-[#fbd971]/30 rounded-xl shadow-[0_0_10px_rgba(251,217,113,0.1)] group-hover:bg-[#fbd971]/20 transition-all flex items-center justify-center">
+            <User size={22} className="text-[#fbd971] group-hover:scale-110 transition-transform" />
+          </div>
+          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
+            about
+          </span>
+        </button>
+
+        {/* Skills Icon (Closes Terminal Window, Scrolls to Section) */}
+        <button
+          onClick={() => {
+            setIsTerminalOpen(false);
+            smoothScrollTo('skills');
+          }}
+          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="bg-mint/10 p-2 lg:p-2.5 border border-mint/30 rounded-xl shadow-[0_0_10px_rgba(158,240,106,0.1)] group-hover:bg-mint/20 transition-all flex items-center justify-center">
+            <Cpu size={22} className="text-mint group-hover:scale-110 transition-transform" />
+          </div>
+          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
+            skills
+          </span>
+        </button>
+
+        {/* Timeline Icon (Closes Terminal Window, Scrolls to Section) */}
+        <button
+          onClick={() => {
+            setIsTerminalOpen(false);
+            smoothScrollTo('education-workshops');
+          }}
+          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="bg-pixelPink/10 p-2 lg:p-2.5 border border-pixelPink/30 rounded-xl shadow-[0_0_10px_rgba(244,114,182,0.1)] group-hover:bg-pixelPink/20 transition-all flex items-center justify-center">
+            <Award size={22} className="text-pixelPink group-hover:scale-110 transition-transform" />
+          </div>
+          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
+            registry
+          </span>
+        </button>
+
+        {/* Works Icon (Closes Terminal Window, Scrolls to Section) */}
+        <button
+          onClick={() => {
+            setIsTerminalOpen(false);
+            smoothScrollTo('work');
+          }}
+          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="bg-white/5 p-2 lg:p-2.5 border border-white/20 rounded-xl shadow-[0_0_10px_rgba(255,255,255,0.05)] group-hover:bg-white/10 transition-all flex items-center justify-center">
+            <Code2 size={22} className="text-white group-hover:scale-110 transition-transform" />
+          </div>
+          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
+            showroom
+          </span>
+        </button>
+
+        {/* Contact Icon (Closes Terminal Window, Scrolls to Section) */}
+        <button
+          onClick={() => {
+            setIsTerminalOpen(false);
+            smoothScrollTo('contact');
+          }}
+          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="bg-mustard/10 p-2 lg:p-2.5 border border-mustard/30 rounded-xl shadow-[0_0_10px_rgba(234,179,8,0.1)] group-hover:bg-mustard/20 transition-all flex items-center justify-center">
+            <Send size={22} className="text-mustard group-hover:scale-110 transition-transform" />
+          </div>
+          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
+            transmit
+          </span>
+        </button>
+
+        {/* Terminal Icon (Triggers switch to full-screen interactive Terminal view mode) */}
+        <button
+          onClick={onSwitchToTerminal}
+          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
+        >
+          <div className="bg-neonGreen/10 p-2 lg:p-2.5 border border-neonGreen/30 rounded-xl shadow-[0_0_10px_rgba(158,240,106,0.15)] group-hover:bg-neonGreen/20 transition-all flex items-center justify-center">
+            <TermIcon size={22} className="text-neonGreen group-hover:scale-110 transition-transform" strokeWidth={2} />
+          </div>
+          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
+            terminal
+          </span>
+        </button>
+      </aside>
+
+      {/* ====================================================
+          MAIN DASHBOARD BENTO BOX SPACE
+         ==================================================== */}
+      <div className="flex-1 space-y-8">
         
         {/* ====================================================
             1. HERO SECTION (Cybernetic Identity Card)
@@ -97,7 +207,7 @@ const StandardPortfolio: React.FC = () => {
             {/* Right Column: Mission Core */}
             <div className="lg:col-span-8 flex flex-col justify-center space-y-6">
               <div className="flex items-center gap-2 text-white font-bold text-lg tracking-widest uppercase">
-                <Terminal size={18} className="text-neonGreen" /> MISSION_INTRODUCTION
+                <TermIcon size={18} className="text-neonGreen" /> MISSION_INTRODUCTION
               </div>
               
               <div className="space-y-4 text-gray-300">
@@ -151,7 +261,7 @@ const StandardPortfolio: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveSkillTab(tab.id as any)}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-1 text-[10px] md:text-xs font-bold rounded-lg transition-all duration-300 ${
+                    className={`flex items-center justify-center gap-1.5 py-2 px-1 text-[10px] md:text-xs font-bold rounded-lg transition-all duration-300 cursor-pointer ${
                       active 
                         ? 'bg-white/[0.08] text-white shadow-inner border-t border-white/[0.05]' 
                         : 'text-gray-500 hover:text-gray-300'
@@ -200,7 +310,7 @@ const StandardPortfolio: React.FC = () => {
               <span className="text-[9px] text-gray-500 font-bold">SYS.LNK // ACADEMICS</span>
             </div>
 
-            {/* High-Tech Custom Scrollable Timeline */}
+            {/* Custom Scrollable Timeline */}
             <div className="flex-1 overflow-y-auto max-h-[420px] pr-2 space-y-8 custom-scrollbar">
               
               {/* Lenovo Internship */}
@@ -300,7 +410,6 @@ const StandardPortfolio: React.FC = () => {
                   </div>
                 ))}
               </div>
-
             </div>
           </section>
 
@@ -326,7 +435,7 @@ const StandardPortfolio: React.FC = () => {
                 <button
                   key={tag}
                   onClick={() => setProjectFilter(tag)}
-                  className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all duration-300 whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all duration-300 whitespace-nowrap cursor-pointer ${
                     projectFilter === tag 
                       ? 'bg-white text-black shadow-lg font-extrabold' 
                       : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
@@ -473,6 +582,18 @@ const StandardPortfolio: React.FC = () => {
         </section>
 
       </div>
+
+      {/* ====================================================
+          FLOATING INTERACTIVE TERMINAL WINDOW OVERLAY
+         ==================================================== */}
+      {isTerminalOpen && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-[100] flex items-center justify-center p-4 md:p-8 lg:p-12 animate-fade-in animate-duration-300">
+          <div className="w-full max-w-4xl animate-zoom-in relative">
+            <TerminalWindow onClose={() => setIsTerminalOpen(false)} initialCommand="whoami" />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
