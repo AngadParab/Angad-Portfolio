@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -26,6 +26,7 @@
               socialBg: '#18181b',
             },
             fontFamily: {
+              sans: ['"Outfit"', 'sans-serif'],
               mono: ['"JetBrains Mono"', 'monospace'],
               pixel: ['"Press Start 2P"', 'cursive'],
             },
@@ -51,7 +52,7 @@
       }
     </script>
     <style>
-      * {
+      .terminal-mode * {
         cursor: none !important;
       }
       /* Custom Scrollbar for Webkit */

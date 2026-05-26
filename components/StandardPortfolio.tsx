@@ -1,609 +1,851 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PROJECTS, EXPERIENCE, WORKSHOPS } from '../constants';
-import TerminalWindow from './Terminal';
 import { 
-  Send, 
-  Terminal as TermIcon, 
-  Code2, 
-  Cpu, 
-  Sparkles, 
-  BookOpen, 
-  GraduationCap, 
-  Award, 
-  Shield, 
-  Activity, 
-  Layers, 
+  Check, 
+  ArrowLeft,
+  Award,
   ExternalLink,
   Github,
-  User,
-  Wrench,
-  Palette
+  ChevronRight,
+  Send,
+  Terminal as TermIcon
 } from 'lucide-react';
 
 interface StandardPortfolioProps {
   onSwitchToTerminal: () => void;
 }
 
-const StandardPortfolio: React.FC<StandardPortfolioProps> = ({ onSwitchToTerminal }) => {
-  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-  const [activeSkillTab, setActiveSkillTab] = useState<'software' | 'hardware' | 'design'>('software');
-  const [projectFilter, setProjectFilter] = useState<string>('ALL');
+// Flat retro Win95 Yellow Folder SVG
+const RetroFolderIcon: React.FC = () => (
+  <svg className="w-12 h-12 filter drop-shadow-[1px_1px_0px_rgba(0,0,0,1)]" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 10C4 8.89543 4.89543 8 6 8H18L24 14H42C43.1046 14 44 14.8954 44 16V40C44 41.1046 43.1046 42 42 42H6C4.89543 42 4 41.1046 4 40V10Z" fill="#ffca28" stroke="#000" strokeWidth="2.5" strokeLinejoin="round" />
+    <path d="M4 18H44" stroke="#000" strokeWidth="2.5" />
+  </svg>
+);
 
-  // Collect all unique tags from projects for filtering
-  const allTags = ['ALL', ...Array.from(new Set(PROJECTS.flatMap(p => p.tags)))];
+// Flat profile dark app shortcut for whoami (About Me)
+const RetroWhoamiIcon: React.FC = () => (
+  <div className="w-12 h-12 bg-[#222] border-2 border-black rounded-lg shadow-[2px_2px_0px_#000] flex items-center justify-center text-white font-bold font-mono text-xl select-none">
+    a
+  </div>
+);
 
-  const filteredProjects = projectFilter === 'ALL' 
-    ? PROJECTS 
-    : PROJECTS.filter(p => p.tags.includes(projectFilter));
+// Retro console system terminal shortcut icon
+const RetroTerminalIcon: React.FC = () => (
+  <div className="w-12 h-12 bg-[#1a1a1a] border-2 border-black rounded-lg shadow-[2px_2px_0px_#000] flex items-center justify-center text-[#00ff41] font-bold font-mono text-base select-none">
+    &gt;_
+  </div>
+);
 
-  const skillsData = {
-    software: [
-      { name: "JavaScript / TypeScript", level: 95, color: "bg-neonGreen shadow-neonGreen/30" },
-      { name: "React & Next.js", level: 85, color: "bg-mint shadow-mint/30" },
-      { name: "Node.js & Python", level: 75, color: "bg-pixelPink shadow-pixelPink/30" },
-      { name: "C++ / Low-level", level: 55, color: "bg-mustard shadow-mustard/30" },
-    ],
-    hardware: [
-      { name: "Arduino / ESP32 Development", level: 85, color: "bg-mint shadow-mint/30" },
-      { name: "Raspberry Pi & Linux Systems", level: 70, color: "bg-neonGreen shadow-neonGreen/30" },
-      { name: "Circuit Design & Prototyping", level: 60, color: "bg-mustard shadow-mustard/30" },
-      { name: "Soldering & Assembly", level: 90, color: "bg-pixelPink shadow-pixelPink/30" },
-    ],
-    design: [
-      { name: "Figma / UI & UX Prototyping", level: 90, color: "bg-pixelPink shadow-pixelPink/30" },
-      { name: "Adobe Photoshop / Vector Art", level: 70, color: "bg-neonGreen shadow-neonGreen/30" },
-      { name: "Premiere Pro / Video Editing", level: 60, color: "bg-mustard shadow-mustard/30" },
-      { name: "3D Modeling & Rendering", level: 45, color: "bg-mint shadow-mint/30" },
-    ]
-  };
-
-  const smoothScrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    el?.scrollIntoView({ behavior: 'smooth' });
-  };
+// Dynamic falling green letters for the HACK window
+const MatrixRain: React.FC = () => {
+  const [text, setText] = useState('');
+  useEffect(() => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~';
+    const interval = setInterval(() => {
+      let s = '';
+      for (let i = 0; i < 800; i++) {
+        s += chars.charAt(Math.floor(Math.random() * chars.length));
+        if (i % 25 === 0) s += '\n';
+      }
+      setText(s);
+    }, 60);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 font-mono text-gray-300 relative z-20 pb-24 px-4 md:px-8">
+    <pre className="text-[#39ff14] font-mono text-[9px] sm:text-[11px] leading-tight select-none break-all whitespace-pre-wrap h-[260px] overflow-hidden bg-black p-4 border border-black/40 rounded-lg">
+      {text}
+    </pre>
+  );
+};
+
+const StandardPortfolio: React.FC<StandardPortfolioProps> = ({ onSwitchToTerminal }) => {
+  // Navigation: Track active window
+  const [activeWindow, setActiveWindow] = useState<'whoami' | 'projects' | 'education' | 'ping' | 'hack' | null>(null);
+
+  // Projects window active selection sub-state
+  const [selectedProjectIndex, setSelectedProjectIndex] = useState<number | null>(null);
+
+  // Education window subdirectory path sub-state (File Explorer)
+  const [educationPath, setEducationPath] = useState<'root' | 'colleges' | 'workshops' | 'experience' | 'skills'>('root');
+
+  // Contact Form Transmitter State
+  const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactMessage, setContactMessage] = useState('');
+  const [contactStatus, setContactStatus] = useState<'idle' | 'sending' | 'success'>('idle');
+  const [contactProgress, setContactProgress] = useState(0);
+  const [contactLog, setContactLog] = useState<string[]>([]);
+
+  const handleIconClick = (id: 'whoami' | 'projects' | 'education' | 'ping' | 'resume' | 'hack' | 'terminal') => {
+    if (id === 'resume') {
+      window.open('/resume.pdf', '_blank');
+      return;
+    }
+    if (id === 'terminal') {
+      onSwitchToTerminal();
+      return;
+    }
+    setActiveWindow(id);
+    setSelectedProjectIndex(null);
+    setEducationPath('root');
+    setContactStatus('idle');
+  };
+
+  const handleCloseWindow = () => {
+    setActiveWindow(null);
+  };
+
+  // Secure transmitter dispatch sequence
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactStatus('sending');
+    setContactProgress(0);
+    setContactLog(['[SYS] Dialing gateway server...']);
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      setContactProgress(progress);
       
-      {/* 🚀 SCI-FI GLOW OVERLAYS */}
-      <div className="absolute top-10 left-10 w-96 h-96 bg-neonGreen/5 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-pixelPink/5 rounded-full blur-[150px] pointer-events-none"></div>
+      if (progress === 30) {
+        setContactLog(prev => [...prev, '[SYS] Compiling forms data packet...']);
+      } else if (progress === 60) {
+        setContactLog(prev => [...prev, '[SYS] Handshaking secure REST channels...']);
+      } else if (progress === 90) {
+        setContactLog(prev => [...prev, '[SYS] Transmitting payload headers...']);
+      } else if (progress === 100) {
+        clearInterval(interval);
+        setContactLog(prev => [...prev, '[SYS] Package dispatched successfully!']);
+        setTimeout(() => {
+          setContactStatus('success');
+        }, 400);
+      }
+    }, 150);
+  };
 
-      {/* ====================================================
-          DESKTOP & MOBILE SHORTCUT SIDEBAR/NAVBAR
-         ==================================================== */}
-      <aside className="w-full lg:w-32 shrink-0 p-3 lg:p-8 flex flex-row lg:flex-col gap-4 lg:gap-8 justify-around lg:justify-start items-center border border-white/[0.08] bg-black/85 lg:bg-black/60 backdrop-blur-md lg:backdrop-blur-sm rounded-2xl lg:rounded-3xl sticky top-2 lg:top-24 h-fit z-30 select-none overflow-x-auto lg:overflow-visible">
+  // WINDOW CONTENTS RENDERERS
+
+  // Window 1: C:\ANGAD\whoami (About / whoami)
+  const renderWhoamiWindow = () => (
+    <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 items-start font-sans">
+      {/* Left Column: Avatar Circular Cutout & Status Badges */}
+      <div className="flex flex-col items-center justify-center gap-4 w-full">
+        <div className="w-36 h-36 rounded-full border-[3px] border-black bg-white overflow-hidden shadow-[4px_4px_0px_#000] flex-shrink-0 relative">
+          <img src="/photo.jpg" alt="Angad Parab" className="w-full h-full object-cover" />
+        </div>
         
-        {/* About Icon (Opens About Terminal in Window Overlay) */}
-        <button
-          onClick={() => setIsTerminalOpen(true)}
-          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
-        >
-          <div className="bg-[#fbd971]/10 p-2 lg:p-2.5 border border-[#fbd971]/30 rounded-xl shadow-[0_0_10px_rgba(251,217,113,0.1)] group-hover:bg-[#fbd971]/20 transition-all flex items-center justify-center">
-            <User size={22} className="text-[#fbd971] group-hover:scale-110 transition-transform" />
+        {/* Mindset & Status Box */}
+        <div className="w-full border-2 border-black bg-[#586242]/5 rounded-xl p-3 space-y-2 text-xs font-mono border-dashed shadow-[2px_2px_0px_rgba(0,0,0,0.1)] text-left">
+          <div>
+            <span className="text-gray-500 font-bold block text-[10px]">MINDSET:</span>
+            <span className="text-[#586242] font-bold">Always Learning</span>
           </div>
-          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
-            about
-          </span>
-        </button>
-
-        {/* Skills Icon (Closes Terminal Window, Scrolls to Section) */}
-        <button
-          onClick={() => {
-            setIsTerminalOpen(false);
-            smoothScrollTo('skills');
-          }}
-          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
-        >
-          <div className="bg-mint/10 p-2 lg:p-2.5 border border-mint/30 rounded-xl shadow-[0_0_10px_rgba(158,240,106,0.1)] group-hover:bg-mint/20 transition-all flex items-center justify-center">
-            <Cpu size={22} className="text-mint group-hover:scale-110 transition-transform" />
+          <div className="border-t border-black/10 pt-1.5">
+            <span className="text-gray-500 font-bold block text-[10px]">STATUS:</span>
+            <span className="text-[#c85a17] font-bold flex items-center gap-1.5 animate-pulse">
+              ● Building new ideas
+            </span>
           </div>
-          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
-            skills
-          </span>
-        </button>
+        </div>
+      </div>
 
-        {/* Timeline Icon (Closes Terminal Window, Scrolls to Section) */}
-        <button
-          onClick={() => {
-            setIsTerminalOpen(false);
-            smoothScrollTo('education-workshops');
-          }}
-          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
-        >
-          <div className="bg-pixelPink/10 p-2 lg:p-2.5 border border-pixelPink/30 rounded-xl shadow-[0_0_10px_rgba(244,114,182,0.1)] group-hover:bg-pixelPink/20 transition-all flex items-center justify-center">
-            <Award size={22} className="text-pixelPink group-hover:scale-110 transition-transform" />
+      {/* Right Column: Profile details */}
+      <div className="space-y-4 text-left select-text animate-fade-in flex-1">
+        <div>
+          <h2 className="text-4xl font-black tracking-tight text-[#c85a17] leading-none uppercase select-all">
+            ANGAD PARAB
+          </h2>
+          <div className="font-mono text-xs uppercase tracking-widest text-[#586242] font-bold mt-1">
+            JACK OF ALL TRADES, MASTER OF SOME
           </div>
-          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
-            registry
-          </span>
-        </button>
+        </div>
 
-        {/* Works Icon (Closes Terminal Window, Scrolls to Section) */}
-        <button
-          onClick={() => {
-            setIsTerminalOpen(false);
-            smoothScrollTo('work');
-          }}
-          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
-        >
-          <div className="bg-white/5 p-2 lg:p-2.5 border border-white/20 rounded-xl shadow-[0_0_10px_rgba(255,255,255,0.05)] group-hover:bg-white/10 transition-all flex items-center justify-center">
-            <Code2 size={22} className="text-white group-hover:scale-110 transition-transform" />
-          </div>
-          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
-            showroom
-          </span>
-        </button>
+        <p className="text-gray-700 italic text-sm border-l-2 border-[#586242] pl-3 py-1 mt-1 leading-relaxed">
+          "I learn like a scientist: observe, experiment, break, rebuild, and improve."
+        </p>
 
-        {/* Contact Icon (Closes Terminal Window, Scrolls to Section) */}
-        <button
-          onClick={() => {
-            setIsTerminalOpen(false);
-            smoothScrollTo('contact');
-          }}
-          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
-        >
-          <div className="bg-mustard/10 p-2 lg:p-2.5 border border-mustard/30 rounded-xl shadow-[0_0_10px_rgba(234,179,8,0.1)] group-hover:bg-mustard/20 transition-all flex items-center justify-center">
-            <Send size={22} className="text-mustard group-hover:scale-110 transition-transform" />
-          </div>
-          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
-            transmit
-          </span>
-        </button>
+        <div className="space-y-2.5 text-gray-600 text-xs leading-relaxed font-sans">
+          <p className="select-all">
+            I am a naturally curious mind who loves understanding how things work—whether it’s technology, design, human behavior, or the hidden mechanics behind everyday systems. My goal isn’t to master one field, but to connect ideas across many of them and create something meaningful.
+          </p>
+          <p className="select-all">
+            Early exposure to real-world projects and corporate environments helped me sharpen my problem-solving, analytical, and communication skills. I enjoy diving deep into a topic, asking questions, and figuring out how things can be improved or redesigned. For me, learning is not a phase… it’s a habit.
+          </p>
+        </div>
 
-        {/* Terminal Icon (Triggers switch to full-screen interactive Terminal view mode) */}
-        <button
-          onClick={onSwitchToTerminal}
-          className="flex flex-col items-center gap-1.5 group active:scale-95 transition-all cursor-pointer"
-        >
-          <div className="bg-neonGreen/10 p-2 lg:p-2.5 border border-neonGreen/30 rounded-xl shadow-[0_0_10px_rgba(158,240,106,0.15)] group-hover:bg-neonGreen/20 transition-all flex items-center justify-center">
-            <TermIcon size={22} className="text-neonGreen group-hover:scale-110 transition-transform" strokeWidth={2} />
-          </div>
-          <span className="text-gray-400 font-bold text-[8px] lg:text-[9px] uppercase tracking-wider group-hover:text-white transition-colors">
-            terminal
-          </span>
-        </button>
-      </aside>
+        {/* Experiment Areas */}
+        <div className="border-2 border-black bg-white rounded-xl p-4 shadow-[3px_3px_0px_rgba(0,0,0,0.15)] space-y-2 select-text">
+          <h4 className="text-[#586242] font-mono font-bold text-[10px] uppercase tracking-wider">
+            Some areas I experiment with:
+          </h4>
+          <ul className="space-y-1.5 text-xs text-gray-600 font-sans">
+            <li className="flex items-start gap-2">
+              <span className="text-[#c85a17] font-mono font-bold">▹</span>
+              <span>Software, AI concepts & automation</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#c85a17] font-mono font-bold">▹</span>
+              <span>XR, robotics, and interactive technologies</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#c85a17] font-mono font-bold">▹</span>
+              <span>UI/UX, design thinking & 3D modeling</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#c85a17] font-mono font-bold">▹</span>
+              <span>Personal development, observation & creativity</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#c85a17] font-mono font-bold">▹</span>
+              <span>Anything new that pushes my curiosity further</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
 
-      {/* ====================================================
-          MAIN DASHBOARD BENTO BOX SPACE
-         ==================================================== */}
-      <div className="flex-1 space-y-8">
-        
-        {/* ====================================================
-            1. HERO SECTION (Cybernetic Identity Card)
-           ==================================================== */}
-        <section id="about" className="relative overflow-hidden rounded-3xl border border-white/[0.07] bg-black/60 backdrop-blur-2xl p-6 md:p-10 group">
-          {/* Subtle grid pattern background */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-          {/* Decorative scanner line */}
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-neonGreen/20 to-transparent group-hover:animate-scanner pointer-events-none"></div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
-            {/* Left Column: Avatar & Status */}
-            <div className="lg:col-span-4 flex flex-col items-center lg:items-start justify-between border-b lg:border-b-0 lg:border-r border-white/[0.08] pb-6 lg:pb-0 lg:pr-8">
-              <div className="w-full text-center lg:text-left space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neonGreen/30 bg-neonGreen/5 text-[10px] text-neonGreen font-bold tracking-widest uppercase">
-                  <Activity size={10} className="animate-pulse" /> UPLINK_ESTABLISHED
-                </div>
-                
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tighter select-none uppercase">
-                  ANGAD<br className="hidden lg:block"/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-neonGreen via-mint to-pixelPink">PARAB</span>
-                </h1>
-                
-                <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
-                  System Architect & Security Inquisitive. Connecting low-level circuits, modular software systems, and immersive visual design.
-                </p>
+  // Window 2: C:\ANGAD\projects (Projects Showcase - loaded with rich terminal projects!)
+  const renderProjectsWindow = () => {
+    if (selectedProjectIndex !== null) {
+      const proj = PROJECTS[selectedProjectIndex];
+      return (
+        <div className="space-y-5 font-sans animate-fade-in">
+          {/* Back Button */}
+          <button 
+            onClick={() => setSelectedProjectIndex(null)}
+            className="flex items-center gap-1 text-[10px] font-mono font-bold uppercase border-2 border-black bg-white text-[#586242] px-3 py-1.5 rounded shadow-[2px_2px_0px_#000] hover:bg-gray-100 cursor-pointer active:translate-y-[0.5px] active:shadow-[1px_1px_0px_#000] focus:outline-none"
+          >
+            <ArrowLeft size={12} /> Back to Projects List
+          </button>
+
+          <div className="border-2 border-black bg-white rounded-xl p-4 shadow-[4px_4px_0px_rgba(0,0,0,0.15)] space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-start select-text">
+              <div className="w-full sm:w-36 h-24 border-2 border-black rounded-lg overflow-hidden bg-black flex-shrink-0">
+                <img src={proj.image} alt={proj.title} className="w-full h-full object-cover opacity-80" />
               </div>
-
-              <div className="w-full mt-6 space-y-2 border-t border-white/[0.05] pt-4 text-xs">
-                <div className="flex justify-between"><span className="text-gray-500">HOST_OS</span> <span className="text-white font-bold">Linux-X64</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">SIGNAL_STATUS</span> <span className="text-mint font-bold">● ACTIVE</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">ROLE_CLASS</span> <span className="text-mustard font-bold">Jack of all Trades</span></div>
+              <div className="space-y-2 flex-1">
+                <h3 className="text-xl font-extrabold text-gray-900 leading-none">{proj.title}</h3>
+                <span className="inline-block text-[9px] text-[#586242] font-mono font-bold bg-[#586242]/10 border border-[#586242]/20 px-2 py-0.5 rounded-md">
+                  STATUS: ACTIVE / FULL DEPLOY
+                </span>
+                <p className="text-gray-600 text-xs leading-relaxed mt-1.5">{proj.description}</p>
               </div>
             </div>
 
-            {/* Right Column: Mission Core */}
-            <div className="lg:col-span-8 flex flex-col justify-center space-y-6">
-              <div className="flex items-center gap-2 text-white font-bold text-lg tracking-widest uppercase">
-                <TermIcon size={18} className="text-neonGreen" /> MISSION_INTRODUCTION
-              </div>
-              
-              <div className="space-y-4 text-gray-300">
-                <p className="text-lg md:text-xl font-bold leading-relaxed text-white">
-                  I learn like a scientist: <span className="text-neonGreen underline decoration-neonGreen/30 underline-offset-4">observe, experiment, break, rebuild, and optimize.</span>
-                </p>
-                <p className="leading-relaxed text-sm md:text-base text-gray-400">
-                  I am a naturally curious engineer driven by the thrill of discovering how systems operate—from high-level web stacks to bare-metal microcontrollers and visual human interfaces. Rather than specializing in a narrow vertical, I build horizontally, combining insights from software architecture, cybersecurity, and hardware design.
-                </p>
-                <p className="leading-relaxed text-sm md:text-base text-gray-400 hidden md:block">
-                  I believe that true innovation lies at the intersections of distinct disciplines. I design with empathy, code with modularity, and test with paranoia—crafting digital experiences that feel robust, highly secure, and dynamically alive.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/[0.05]">
-                <div className="flex flex-wrap gap-3 text-[10px] text-gray-400 font-bold uppercase">
-                  <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Continuous Learning</span>
-                  <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Threat Mitigation</span>
-                  <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Hardware Interfacing</span>
-                </div>
-                
-                <a
-                  href="/resume.pdf"
-                  download="Angad_Parab_CV.pdf"
-                  className="flex items-center gap-2 px-5 py-2 rounded-xl border border-neonGreen/30 bg-neonGreen/5 hover:bg-neonGreen/10 text-xs font-bold text-neonGreen hover:text-white transition-all shadow-[0_0_15px_rgba(158,240,106,0.05)] hover:shadow-[0_0_20px_rgba(158,240,106,0.15)] group"
-                >
-                  <Award size={14} className="group-hover:rotate-12 transition-transform" />
-                  DOWNLOAD CV
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ====================================================
-            2. INTERACTIVE SKILLS & TIMELINE COMBINED ROW
-           ==================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
-          {/* A. Core Competencies Matrix (lg:col-span-5) */}
-          <section id="skills" className="lg:col-span-5 border border-white/[0.07] bg-black/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden group">
-            <div className="absolute -right-20 -bottom-20 w-48 h-48 bg-mint/5 rounded-full blur-[80px] pointer-events-none"></div>
-            
-            <div className="flex items-center justify-between mb-6 border-b border-white/[0.07] pb-4">
-              <h2 className="text-white font-bold text-lg flex items-center gap-2 tracking-widest uppercase">
-                <Cpu size={18} className="text-mint" /> Skill Matrix
-              </h2>
-              {/* Telemetry Tag */}
-              <span className="text-[9px] text-gray-500 font-bold">SYS.LNK // SKILLS</span>
-            </div>
-
-            {/* Interactive Category Selector Tabs */}
-            <div className="grid grid-cols-3 gap-1 p-1 bg-white/[0.03] border border-white/[0.06] rounded-xl mb-6">
-              {[
-                { id: 'software', label: 'Code', icon: Code2 },
-                { id: 'hardware', label: 'Hardware', icon: Wrench },
-                { id: 'design', label: 'Creative', icon: Palette }
-              ].map(tab => {
-                const Icon = tab.icon;
-                const active = activeSkillTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveSkillTab(tab.id as any)}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-1 text-[10px] md:text-xs font-bold rounded-lg transition-all duration-300 cursor-pointer ${
-                      active 
-                        ? 'bg-white/[0.08] text-white shadow-inner border-t border-white/[0.05]' 
-                        : 'text-gray-500 hover:text-gray-300'
-                    }`}
-                  >
-                    <Icon size={12} className={active ? 'text-mint' : ''} />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Progress Bars Container */}
-            <div className="flex-1 flex flex-col justify-center space-y-6">
-              {skillsData[activeSkillTab].map((skill, index) => (
-                <div key={index} className="space-y-2 group/bar">
-                  <div className="flex justify-between text-xs font-bold">
-                    <span className="text-gray-300 group-hover/bar:text-white transition-colors">{skill.name}</span>
-                    <span className="text-mint">{skill.level}%</span>
-                  </div>
-                  <div className="h-2 w-full bg-white/[0.03] border border-white/[0.06] rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full ${skill.color} rounded-full transition-all duration-1000 ease-out`}
-                      style={{ width: `${skill.level}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* HUD Footer */}
-            <div className="mt-8 border-t border-white/[0.05] pt-4 text-[10px] text-gray-500 flex justify-between">
-              <span>ACTIVE_COMPILATION: ON</span>
-              <span>ENGINE: V8-CORE</span>
-            </div>
-          </section>
-
-          {/* B. Academic Registry & Workshops Timeline (lg:col-span-7) */}
-          <section id="education-workshops" className="lg:col-span-7 border border-white/[0.07] bg-black/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden group">
-            <div className="absolute -left-20 -top-20 w-48 h-48 bg-pixelPink/5 rounded-full blur-[80px] pointer-events-none"></div>
-
-            <div className="flex items-center justify-between mb-6 border-b border-white/[0.07] pb-4">
-              <h2 className="text-white font-bold text-lg flex items-center gap-2 tracking-widest uppercase">
-                <GraduationCap size={20} className="text-pixelPink" /> Registry & Timeline
-              </h2>
-              <span className="text-[9px] text-gray-500 font-bold">SYS.LNK // ACADEMICS</span>
-            </div>
-
-            {/* Custom Scrollable Timeline */}
-            <div className="flex-1 overflow-y-auto max-h-[420px] pr-2 space-y-8 custom-scrollbar">
-              
-              {/* Lenovo Internship */}
-              {EXPERIENCE.map((exp, i) => (
-                <div key={`exp-${i}`} className="relative pl-6 border-l-2 border-white/[0.08] hover:border-pixelPink transition-colors group/item pb-2">
-                  <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#222] border border-white/[0.2] group-hover/item:bg-pixelPink group-hover/item:border-pixelPink transition-all duration-300"></div>
-                  
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
-                    <div>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-pixelPink/5 border border-pixelPink/20 text-[9px] text-pixelPink font-bold uppercase tracking-wider mb-1">
-                        Professional Internship
-                      </span>
-                      <h3 className="text-white font-bold text-base group-hover/item:text-pixelPink transition-colors">{exp.role}</h3>
-                      <h4 className="text-mint text-xs mt-0.5">{exp.company}</h4>
-                    </div>
-                    <span className="text-gray-500 text-xs font-mono">{exp.period}</span>
-                  </div>
-                  
-                  <p className="text-gray-400 text-xs leading-relaxed mt-2.5">{exp.description}</p>
-                  
-                  {exp.certificate && (
-                    <a 
-                      href={exp.certificate} 
-                      target="_blank" 
-                      rel="noreferrer" 
-                      className="inline-flex items-center gap-1.5 text-[9px] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white px-2 py-1 rounded bg-white/[0.02] mt-3 transition-colors"
-                    >
-                      <Award size={11} className="text-pixelPink" /> Decrypt Certificate
-                    </a>
-                  )}
-                </div>
-              ))}
-
-              {/* Workshops & Trainings */}
-              {WORKSHOPS.map((workshop, i) => (
-                <div key={`work-${i}`} className="relative pl-6 border-l-2 border-white/[0.08] hover:border-mint transition-colors group/item pb-2">
-                  <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#222] border border-white/[0.2] group-hover/item:bg-mint group-hover/item:border-mint transition-all duration-300"></div>
-                  
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
-                    <div>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-mint/5 border border-mint/20 text-[9px] text-mint font-bold uppercase tracking-wider mb-1">
-                        Workshop Training
-                      </span>
-                      <h3 className="text-white font-bold text-base group-hover/item:text-mint transition-colors">{workshop.title}</h3>
-                      <h4 className="text-gray-400 text-xs mt-0.5">{workshop.organizer}</h4>
-                    </div>
-                    <span className="text-gray-500 text-xs font-mono">{workshop.period}</span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {workshop.role && (
-                      <span className="inline-block text-[9px] px-2 py-0.5 bg-mustard/10 text-mustard border border-mustard/20 rounded font-bold">
-                        {workshop.role}
-                      </span>
-                    )}
-                    {workshop.grade && (
-                      <span className="inline-block text-[9px] px-2 py-0.5 bg-neonGreen/10 text-neonGreen border border-neonGreen/20 rounded font-bold">
-                        Grade: {workshop.grade}
-                      </span>
-                    )}
-                  </div>
-                  
-                  <p className="text-gray-400 text-xs leading-relaxed mt-2.5">{workshop.description}</p>
-                  
-                  {workshop.certificate && (
-                    <a 
-                      href={workshop.certificate} 
-                      target="_blank" 
-                      rel="noreferrer" 
-                      className="inline-flex items-center gap-1.5 text-[9px] text-gray-400 hover:text-white border border-white/[0.08] hover:border-white px-2 py-1 rounded bg-white/[0.02] mt-3 transition-colors"
-                    >
-                      <Award size={11} className="text-mint" /> View Certificate
-                    </a>
-                  )}
-                </div>
-              ))}
-
-              {/* Education Background */}
-              <div className="border-t border-white/[0.05] pt-6 space-y-6">
-                <h4 className="text-gray-500 text-[10px] font-bold uppercase tracking-widest pl-6">Formal Academic History</h4>
-                
-                {[
-                  { title: "B.Sc. in Computer Science", org: "GCASQC, Quepem, Goa", period: "Present", desc: "Focusing on core CS theory, computational mathematics, and cybersecurity protocols." },
-                  { title: "Higher Secondary School (HSSC)", org: "Multipurpose HSS, Borda Margao", period: "Completed", desc: "Science major covering Advanced Physics, Chemistry, Biology, and Mathematics." },
-                  { title: "Secondary School (SSC)", org: "Popular High School Margao", period: "Completed", desc: "General science and mathematics foundation." }
-                ].map((edu, idx) => (
-                  <div key={idx} className="relative pl-6 border-l-2 border-white/[0.08] hover:border-mustard transition-colors group/item">
-                    <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#222] border border-white/[0.2] group-hover/item:bg-mustard group-hover/item:border-mustard transition-all duration-300"></div>
-                    <div className="flex justify-between items-start text-xs sm:text-sm">
-                      <div>
-                        <h3 className="text-white font-bold group-hover/item:text-mustard transition-colors">{edu.title}</h3>
-                        <h4 className="text-gray-400 text-xs mt-0.5">{edu.org}</h4>
-                      </div>
-                      <span className="text-gray-500 text-xs font-mono">{edu.period}</span>
-                    </div>
-                    <p className="text-gray-400 text-xs leading-relaxed mt-2">{edu.desc}</p>
-                  </div>
+            <div className="space-y-2 border-t border-black/10 pt-3 select-text">
+              <div className="text-[10px] text-gray-500 font-bold font-mono uppercase">Developer Stack:</div>
+              <div className="flex flex-wrap gap-1.5">
+                {proj.tags.map(t => (
+                  <span key={t} className="text-[9px] font-mono font-bold px-2 py-0.5 bg-gray-100 border border-black/10 text-gray-700 rounded">{t}</span>
                 ))}
               </div>
             </div>
-          </section>
 
+            <div className="pt-3 border-t border-black/10 flex flex-wrap gap-3">
+              {proj.link && (
+                <a 
+                  href={proj.link} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase border-2 border-black bg-white hover:bg-yellow-100 text-black px-4 py-2 rounded-lg shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#000] active:translate-y-[0.5px] active:shadow-[1px_1px_0px_#000] cursor-pointer"
+                >
+                  <ExternalLink size={12} /> Visit Application
+                </a>
+              )}
+              {proj.github && (
+                <a 
+                  href={proj.github} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase border-2 border-black bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-lg shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#000] active:translate-y-[0.5px] active:shadow-[1px_1px_0px_#000] cursor-pointer"
+                >
+                  <Github size={12} /> Source Code
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4 font-sans animate-fade-in">
+        <div className="text-center font-bold tracking-widest text-[#586242] text-xs font-mono uppercase mb-4">
+          --- PROJECT RECORDS ---
         </div>
 
-        {/* ====================================================
-            3. PROJECTS SHOWROOM (Interactive Grid with Filters)
-           ==================================================== */}
-        <section id="work" className="border border-white/[0.07] bg-black/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden group">
-          <div className="absolute left-1/2 -top-40 -translate-x-1/2 w-96 h-96 bg-white/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-white/[0.07] pb-6">
-            <div className="space-y-1">
-              <h2 className="text-white font-bold text-xl flex items-center gap-2 tracking-widest uppercase">
-                <Code2 size={20} className="text-white" /> Cyber Showroom
-              </h2>
-              <p className="text-gray-500 text-xs leading-none">REPOSITORIES DEPLOYED AND ONLINE</p>
-            </div>
-            
-            {/* Filter Tags */}
-            <div className="flex flex-wrap gap-1.5 p-1 bg-white/[0.03] border border-white/[0.06] rounded-xl self-start max-w-full overflow-x-auto">
-              {allTags.map(tag => (
-                <button
-                  key={tag}
-                  onClick={() => setProjectFilter(tag)}
-                  className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all duration-300 whitespace-nowrap cursor-pointer ${
-                    projectFilter === tag 
-                      ? 'bg-white text-black shadow-lg font-extrabold' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((proj, i) => (
-              <a 
-                key={i} 
-                href={proj.link} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="group/card border border-white/[0.07] hover:border-white/[0.18] bg-white/[0.01] hover:bg-white/[0.02] rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1.5 flex flex-col relative"
-              >
-                {/* Glowing neon bottom border */}
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-mint to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Visual Header */}
-                <div className="h-44 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent z-10"></div>
-                  {/* Grid HUD Overlay */}
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:16px_16px] z-10"></div>
-                  
-                  <img 
-                    src={proj.image} 
-                    alt={proj.title} 
-                    className="w-full h-full object-cover opacity-60 group-hover/card:opacity-90 group-hover/card:scale-105 transition-all duration-700" 
-                  />
-                  
-                  {/* Category Telemetry */}
-                  <div className="absolute top-4 right-4 z-20 flex gap-2">
-                    <span className="px-2 py-0.5 border border-white/[0.12] bg-black/80 text-white font-mono text-[8px] tracking-widest uppercase rounded">
-                      VER_0{i + 1}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Body Details */}
-                <div className="p-6 flex-1 flex flex-col relative z-20">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-white font-bold text-base group-hover/card:text-neonGreen transition-colors flex items-center gap-1.5">
-                      {proj.title}
-                    </h3>
-                    <ExternalLink size={12} className="text-gray-500 group-hover/card:text-white transition-colors" />
-                  </div>
-                  
-                  {/* Tech Badges */}
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {proj.tags.map(tag => (
-                      <span key={tag} className="text-[8px] px-2 py-0.5 bg-white/[0.03] text-gray-400 rounded-md border border-white/[0.06] group-hover/card:border-white/[0.12] transition-colors">{tag}</span>
+        <div className="border-2 border-black bg-white rounded-xl overflow-hidden shadow-[4px_4px_0px_rgba(0,0,0,0.15)]">
+          {PROJECTS.map((proj, idx) => (
+            <button 
+              key={idx}
+              onClick={() => setSelectedProjectIndex(idx)}
+              className="w-full text-left flex justify-between items-center px-4 py-3.5 hover:bg-gray-50 border-b border-black/10 last:border-b-0 cursor-pointer transition-colors group"
+            >
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-xs text-[#c85a17] font-bold">{(idx + 1).toString().padStart(2, '0')}</span>
+                <div>
+                  <span className="font-bold text-gray-900 group-hover:text-[#c85a17] transition-colors">{proj.title}</span>
+                  <div className="flex gap-1.5 mt-0.5">
+                    {proj.tags.slice(0, 3).map(tag => (
+                      <span key={tag} className="text-[8px] font-mono px-1 py-0.2 bg-gray-100 border border-black/5 text-gray-500 rounded">{tag}</span>
                     ))}
                   </div>
-                  
-                  <p className="text-gray-400 text-xs leading-relaxed flex-1 line-clamp-3 group-hover/card:text-gray-300 transition-colors">
-                    {proj.description}
-                  </p>
                 </div>
-              </a>
+              </div>
+              <ChevronRight size={14} className="text-gray-400 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Window 3: C:\ANGAD\education (Retro File Explorer with nested subdirectories colleges, workshops, experience, skills!)
+  const renderEducationWindow = () => {
+    // subfolder explorer layout
+    if (educationPath === 'root') {
+      return (
+        <div className="space-y-6 font-sans animate-fade-in">
+          <div className="text-center font-bold tracking-widest text-[#586242] text-xs font-mono uppercase mb-4">
+            --- EDUCATION EXPLORER ---
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 items-center justify-items-center py-4">
+            {/* colleges sub-folder */}
+            <button
+              onClick={() => setEducationPath('colleges')}
+              className="flex flex-col items-center justify-center p-3.5 w-24 h-24 border-2 border-black/10 hover:border-black bg-white/30 hover:bg-white/60 rounded-xl transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,0.05)] hover:shadow-[3.5px_3.5px_0px_#000] active:scale-95 group"
+            >
+              <RetroFolderIcon />
+              <span className="mt-2 text-[9px] font-mono font-bold text-gray-800 uppercase tracking-wide truncate max-w-full">
+                colleges
+              </span>
+            </button>
+
+            {/* workshops sub-folder */}
+            <button
+              onClick={() => setEducationPath('workshops')}
+              className="flex flex-col items-center justify-center p-3.5 w-24 h-24 border-2 border-black/10 hover:border-black bg-white/30 hover:bg-white/60 rounded-xl transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,0.05)] hover:shadow-[3.5px_3.5px_0px_#000] active:scale-95 group"
+            >
+              <RetroFolderIcon />
+              <span className="mt-2 text-[9px] font-mono font-bold text-gray-800 uppercase tracking-wide truncate max-w-full">
+                workshops
+              </span>
+            </button>
+
+            {/* experience sub-folder */}
+            <button
+              onClick={() => setEducationPath('experience')}
+              className="flex flex-col items-center justify-center p-3.5 w-24 h-24 border-2 border-black/10 hover:border-black bg-white/30 hover:bg-white/60 rounded-xl transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,0.05)] hover:shadow-[3.5px_3.5px_0px_#000] active:scale-95 group"
+            >
+              <RetroFolderIcon />
+              <span className="mt-2 text-[9px] font-mono font-bold text-gray-800 uppercase tracking-wide truncate max-w-full">
+                experience
+              </span>
+            </button>
+
+            {/* skills sub-folder */}
+            <button
+              onClick={() => setEducationPath('skills')}
+              className="flex flex-col items-center justify-center p-3.5 w-24 h-24 border-2 border-black/10 hover:border-black bg-white/30 hover:bg-white/60 rounded-xl transition-all cursor-pointer shadow-[2px_2px_0px_rgba(0,0,0,0.05)] hover:shadow-[3.5px_3.5px_0px_#000] active:scale-95 group"
+            >
+              <RetroFolderIcon />
+              <span className="mt-2 text-[9px] font-mono font-bold text-gray-800 uppercase tracking-wide truncate max-w-full">
+                skills
+              </span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (educationPath === 'colleges') {
+      return (
+        <div className="space-y-4 font-sans animate-fade-in select-text">
+          <button 
+            onClick={() => setEducationPath('root')}
+            className="flex items-center gap-1 text-[10px] font-mono font-bold uppercase border-2 border-black bg-white text-[#586242] px-3 py-1.5 rounded shadow-[2px_2px_0px_#000] hover:bg-gray-100 cursor-pointer active:translate-y-[0.5px] active:shadow-[1px_1px_0px_#000]"
+          >
+            <ArrowLeft size={12} /> Up one level
+          </button>
+
+          <div className="space-y-4 max-h-[290px] overflow-y-auto pr-1">
+            {/* GCASQC */}
+            <div className="border-2 border-black bg-white rounded-xl p-4 shadow-[4px_4px_0px_rgba(0,0,0,0.15)] space-y-2">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-[#586242]/5 border border-[#586242]/20 text-[9px] text-[#586242] font-mono font-bold uppercase">
+                Undergraduate
+              </span>
+              <h3 className="text-base font-extrabold text-gray-900 leading-tight">B.Sc. in Computer Science</h3>
+              <p className="text-xs text-[#c85a17] font-mono font-bold">&gt; Govt. College of Arts, Science & Commerce, Quepem, Goa (Present)</p>
+              <p className="text-gray-600 text-xs leading-relaxed pt-1.5 border-t border-black/5">
+                Focusing on core computer science foundations, structural algorithm theories, computational mathematics, and database architecture models.
+              </p>
+            </div>
+
+            {/* HSSC */}
+            <div className="border-2 border-black bg-white rounded-xl p-4 shadow-[4px_4px_0px_rgba(0,0,0,0.15)] space-y-2">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-550/5 border border-black/10 text-[9px] text-gray-500 font-mono font-bold uppercase">
+                Higher Secondary
+              </span>
+              <h3 className="text-base font-extrabold text-gray-900 leading-tight">Higher Secondary School (HSSC)</h3>
+              <p className="text-xs text-gray-500 font-mono font-bold">&gt; Multipurpose Higher Secondary, Borda Margao (Completed)</p>
+              <p className="text-gray-600 text-xs leading-relaxed pt-1">
+                Science Stream: Physics, Chemistry, Biology, and Mathematics.
+              </p>
+            </div>
+
+            {/* SSC */}
+            <div className="border-2 border-black bg-white rounded-xl p-4 shadow-[4px_4px_0px_rgba(0,0,0,0.15)] space-y-2">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-550/5 border border-black/10 text-[9px] text-gray-500 font-mono font-bold uppercase">
+                Secondary School
+              </span>
+              <h3 className="text-base font-extrabold text-gray-900 leading-tight">Secondary School (SSC)</h3>
+              <p className="text-xs text-gray-500 font-mono font-bold">&gt; Popular High School Margao (Completed)</p>
+              <p className="text-gray-600 text-xs leading-relaxed pt-1">
+                Foundational high school education.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (educationPath === 'workshops') {
+      return (
+        <div className="space-y-4 font-sans animate-fade-in select-text">
+          <button 
+            onClick={() => setEducationPath('root')}
+            className="flex items-center gap-1 text-[10px] font-mono font-bold uppercase border-2 border-black bg-white text-[#586242] px-3 py-1.5 rounded shadow-[2px_2px_0px_#000] hover:bg-gray-100 cursor-pointer active:translate-y-[0.5px] active:shadow-[1px_1px_0px_#000]"
+          >
+            <ArrowLeft size={12} /> Up one level
+          </button>
+
+          <div className="space-y-4 max-h-[290px] overflow-y-auto pr-1">
+            {WORKSHOPS.map((workshop, i) => (
+              <div key={i} className="border-2 border-black bg-white rounded-xl p-4 shadow-[4px_4px_0px_rgba(0,0,0,0.15)] space-y-2.5">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#586242]/5 border border-[#586242]/20 text-[9px] text-[#586242] font-mono font-bold uppercase">
+                  SPECIALIZED REGISTRY
+                </span>
+                <h3 className="text-base font-extrabold text-gray-900 leading-tight">{workshop.title}</h3>
+                <p className="text-xs text-gray-550 font-mono font-bold">&gt; {workshop.organizer} — {workshop.period}</p>
+                
+                <div className="flex gap-2 text-[8px] font-mono font-bold">
+                  {workshop.role && (
+                    <span className="bg-yellow-100 border border-yellow-300 text-yellow-700 px-2 py-0.2 rounded">
+                      Role: {workshop.role}
+                    </span>
+                  )}
+                  {workshop.grade && (
+                    <span className="bg-green-100 border border-green-300 text-green-700 px-2 py-0.2 rounded">
+                      Grade: {workshop.grade}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-gray-600 text-xs leading-relaxed">{workshop.description}</p>
+                
+                {workshop.certificate && (
+                  <a 
+                    href={workshop.certificate} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center gap-1 text-[9px] font-mono font-bold uppercase border border-black bg-white hover:bg-gray-50 text-black px-3 py-1.5 rounded shadow-[1.5px_1.5px_0px_#000] cursor-pointer mt-1"
+                  >
+                    <Award size={11} className="text-[#586242]" /> View Certificate
+                  </a>
+                )}
+              </div>
             ))}
           </div>
-        </section>
+        </div>
+      );
+    }
 
-        {/* ====================================================
-            4. SIGNAL TRANSMIT CENTER (Contact Terminal)
-           ==================================================== */}
-        <section id="contact" className="border border-white/[0.07] bg-black/60 backdrop-blur-2xl rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden group">
-          <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-mustard/5 rounded-full blur-[100px] pointer-events-none"></div>
+    if (educationPath === 'experience') {
+      return (
+        <div className="space-y-4 font-sans animate-fade-in select-text">
+          <button 
+            onClick={() => setEducationPath('root')}
+            className="flex items-center gap-1 text-[10px] font-mono font-bold uppercase border-2 border-black bg-white text-[#586242] px-3 py-1.5 rounded shadow-[2px_2px_0px_#000] hover:bg-gray-100 cursor-pointer active:translate-y-[0.5px] active:shadow-[1px_1px_0px_#000]"
+          >
+            <ArrowLeft size={12} /> Up one level
+          </button>
 
-          <div className="flex items-center justify-between mb-8 border-b border-white/[0.07] pb-6">
-            <div className="space-y-1">
-              <h2 className="text-white font-bold text-xl flex items-center gap-2 tracking-widest uppercase">
-                <Send size={18} className="text-mustard" /> Direct Transmitter
-              </h2>
-              <p className="text-gray-500 text-xs leading-none">SEND ENCRYPTED SIGNALS DIRECTLY TO THE NODE</p>
+          <div className="space-y-4 max-h-[290px] overflow-y-auto pr-1">
+            {EXPERIENCE.map((exp, i) => (
+              <div key={i} className="border-2 border-black bg-white rounded-xl p-4 shadow-[4px_4px_0px_rgba(0,0,0,0.15)] space-y-3">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#c85a17]/5 border border-[#c85a17]/20 text-[9px] text-[#c85a17] font-mono font-bold uppercase">
+                  LEAP INTERNSHIP
+                </span>
+                <h3 className="text-base font-extrabold text-gray-900 leading-tight">{exp.role}</h3>
+                <p className="text-xs text-gray-550 font-mono font-bold">&gt; {exp.company} — {exp.period}</p>
+                <p className="text-gray-600 text-xs leading-relaxed">{exp.description}</p>
+                {exp.certificate && (
+                  <a 
+                    href={exp.certificate} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center gap-1 text-[9px] font-mono font-bold uppercase border border-black bg-white hover:bg-gray-50 text-black px-3 py-1.5 rounded shadow-[1.5px_1.5px_0px_#000] cursor-pointer"
+                  >
+                    <Award size={11} className="text-[#c85a17]" /> View Certificate
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (educationPath === 'skills') {
+      return (
+        <div className="space-y-4 font-sans animate-fade-in select-text">
+          <button 
+            onClick={() => setEducationPath('root')}
+            className="flex items-center gap-1 text-[10px] font-mono font-bold uppercase border-2 border-black bg-white text-[#586242] px-3 py-1.5 rounded shadow-[2px_2px_0px_#000] hover:bg-gray-100 cursor-pointer active:translate-y-[0.5px] active:shadow-[1px_1px_0px_#000]"
+          >
+            <ArrowLeft size={12} /> Up one level
+          </button>
+
+          <div className="border-2 border-black bg-white rounded-xl p-4 shadow-[4px_4px_0px_rgba(0,0,0,0.15)] space-y-4 max-h-[290px] overflow-y-auto font-mono text-[10px] sm:text-xs">
+            
+            {/* Software Group */}
+            <div className="space-y-2">
+              <div className="text-[#c85a17] font-bold border-b border-[#c85a17]/20 pb-0.5 mb-2 uppercase tracking-wider">Software & Code</div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">JavaScript/TypeScript</span> <span className="text-[#586242] font-bold">[██████████]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">React & Next.js</span> <span className="text-[#586242] font-bold">[████████░░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Node.js & Python</span> <span className="text-[#586242] font-bold">[███████░░░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">C++ / Low-level</span> <span className="text-[#586242] font-bold">[█████░░░░░]</span></div>
             </div>
-            <span className="text-[9px] text-gray-500 font-bold">SYS.LNK // PING</span>
+
+            {/* Hardware Group */}
+            <div className="space-y-2 pt-2 border-t border-black/5">
+              <div className="text-[#c85a17] font-bold border-b border-[#c85a17]/20 pb-0.5 mb-2 uppercase tracking-wider">Hardware & Tools</div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Arduino / ESP32</span> <span className="text-[#586242] font-bold">[████████░░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Raspberry Pi</span> <span className="text-[#586242] font-bold">[███████░░░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Circuit Design</span> <span className="text-[#586242] font-bold">[█████░░░░░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Soldering</span> <span className="text-[#586242] font-bold">[█████████░]</span></div>
+            </div>
+
+            {/* Design Group */}
+            <div className="space-y-2 pt-2 border-t border-black/5">
+              <div className="text-[#c85a17] font-bold border-b border-[#c85a17]/20 pb-0.5 mb-2 uppercase tracking-wider">Design & Media</div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Figma / UI</span> <span className="text-[#586242] font-bold">[█████████░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Photoshop</span> <span className="text-[#586242] font-bold">[███████░░░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">Premiere Pro</span> <span className="text-[#586242] font-bold">[██████░░░░]</span></div>
+              <div className="flex justify-between items-center"><span className="text-gray-600 font-bold">3D Modeling</span> <span className="text-[#586242] font-bold">[████░░░░░░]</span></div>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  // Window 4: C:\ANGAD\ping (Transmitter Form)
+  const renderPingWindow = () => {
+    if (contactStatus === 'sending') {
+      return (
+        <div className="space-y-4 font-mono text-xs sm:text-sm p-4 text-[#586242]">
+          <div className="font-bold flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#586242] animate-ping"></span>
+            DISPATCHING SECURE DATA PACKET ON PORT 443...
+          </div>
+          
+          <div className="w-full bg-white border border-black rounded-md overflow-hidden p-1 shadow-[1px_1px_0px_#000]">
+            <div className="h-4 bg-[#c85a17] transition-all duration-300" style={{ width: `${contactProgress}%` }}></div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Form */}
-            <form className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4 z-10 w-full" onSubmit={(e) => e.preventDefault()}>
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Identity Identifier</label>
-                <input 
-                  type="text" 
-                  required 
-                  className="bg-white/[0.02] border border-white/[0.08] focus:border-mustard rounded-xl outline-none text-white px-4 py-3 font-mono text-xs transition-all duration-300 focus:bg-white/[0.04]" 
-                  placeholder="Enter your name" 
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Signal Target (Email)</label>
-                <input 
-                  type="email" 
-                  required 
-                  className="bg-white/[0.02] border border-white/[0.08] focus:border-mustard rounded-xl outline-none text-white px-4 py-3 font-mono text-xs transition-all duration-300 focus:bg-white/[0.04]" 
-                  placeholder="Enter your email" 
-                />
-              </div>
-              <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Payload Matrix (Message)</label>
-                <textarea 
-                  required 
-                  rows={4} 
-                  className="bg-white/[0.02] border border-white/[0.08] focus:border-mustard rounded-xl outline-none text-white px-4 py-3 font-mono text-xs resize-none transition-all duration-300 focus:bg-white/[0.04]" 
-                  placeholder="Type your secure message packet here..."
-                ></textarea>
-              </div>
-              <div className="md:col-span-2 flex justify-end mt-2">
-                <button 
-                  type="submit" 
-                  className="bg-white hover:bg-mustard text-black hover:text-black font-extrabold text-xs px-8 py-3.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] cursor-pointer"
-                >
-                  TRANSMIT SIGNAL
-                </button>
-              </div>
-            </form>
+          <div className="bg-white/40 border border-black/10 rounded-lg p-3 space-y-1 text-gray-500 font-mono text-[10px] sm:text-xs">
+            {contactLog.map((log, i) => (
+              <div key={i}>&gt; {log}</div>
+            ))}
+          </div>
+        </div>
+      );
+    }
 
-            {/* Diagnostic Telemetry Panel (Left column on large screens) */}
-            <div className="lg:col-span-5 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 space-y-4">
-              <h3 className="text-gray-300 font-bold text-xs uppercase tracking-widest border-b border-white/[0.07] pb-2 flex items-center gap-2">
-                <Shield size={14} className="text-mustard" /> SECURITY_SHEET
-              </h3>
-              
-              <div className="space-y-3 text-xs leading-relaxed text-gray-400">
-                <p>
-                  Direct transmission utilizes standard REST routing over a TLS/SSL secure handshake to forward your email payload directly.
-                </p>
-                <div className="space-y-1 pt-2 font-mono text-[10px]">
-                  <div>METHOD: <span className="text-white">POST</span></div>
-                  <div>CIPHER: <span className="text-white">ECDHE-RSA-AES128-GCM-SHA256</span></div>
-                  <div>END_POINT: <span className="text-mustard">angadparab.tech/api/ping</span></div>
+    if (contactStatus === 'success') {
+      return (
+        <div className="space-y-4 text-center md:text-left font-sans p-2">
+          <div className="w-12 h-12 rounded-full bg-[#586242]/10 border border-[#586242]/30 flex items-center justify-center mx-auto md:mx-0 shadow-[2px_2px_0px_rgba(0,0,0,0.15)]">
+            <Check size={20} className="text-[#586242] animate-bounce" />
+          </div>
+          
+          <div className="space-y-1">
+            <h3 className="text-gray-900 font-black text-lg uppercase font-mono">Transmission Complete!</h3>
+            <p className="text-gray-600 text-xs">
+              Handshake successfully verified. The secure data packet has been successfully delivered to Angad's server.
+            </p>
+          </div>
+
+          <div className="bg-white border-2 border-black rounded-xl p-3.5 font-mono text-[10px] sm:text-xs text-left leading-relaxed shadow-[3px_3px_0px_#000]">
+            <div><span className="text-gray-400 font-bold">STATUS:</span> <span className="text-black">SUCCESS (HTTPS / REST)</span></div>
+            <div><span className="text-gray-400 font-bold">SIGNATURE:</span> <span className="text-[#c85a17] font-bold">TX-{Math.random().toString(36).substring(2, 8).toUpperCase()}</span></div>
+            <div><span className="text-gray-400 font-bold">TIMESTAMP:</span> <span className="text-gray-500">{new Date().toISOString()}</span></div>
+          </div>
+
+          <button 
+            onClick={() => setContactStatus('idle')}
+            className="w-full bg-[#c85a17] hover:bg-[#b04a10] border-2 border-black text-white font-mono font-bold uppercase tracking-wider py-2.5 rounded-lg shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#000] active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-all cursor-pointer text-xs animate-fade-in"
+          >
+            Send Another Signal
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <form onSubmit={handleContactSubmit} className="space-y-4 font-sans text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] text-gray-500 uppercase tracking-widest font-mono font-bold">Your Name</label>
+            <input 
+              type="text" 
+              required 
+              value={contactName}
+              onChange={e => setContactName(e.target.value)}
+              className="bg-white border-2 border-black rounded-lg outline-none text-black px-3.5 py-2.5 text-xs focus:bg-white shadow-[2px_2px_0px_rgba(0,0,0,0.05)] focus:shadow-[3px_3px_0px_#000] transition-all font-sans" 
+              placeholder="Name identifier" 
+            />
+          </div>
+          
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[10px] text-gray-500 uppercase tracking-widest font-mono font-bold">Your Email</label>
+            <input 
+              type="email" 
+              required 
+              value={contactEmail}
+              onChange={e => setContactEmail(e.target.value)}
+              className="bg-white border-2 border-black rounded-lg outline-none text-black px-3.5 py-2.5 text-xs focus:bg-white shadow-[2px_2px_0px_rgba(0,0,0,0.05)] focus:shadow-[3px_3px_0px_#000] transition-all font-sans" 
+              placeholder="Email coordinate" 
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[10px] text-gray-500 uppercase tracking-widest font-mono font-bold">Your Message</label>
+          <textarea 
+            required 
+            rows={4} 
+            value={contactMessage}
+            onChange={e => setContactMessage(e.target.value)}
+            className="bg-white border-2 border-black rounded-lg outline-none text-black px-3.5 py-2.5 text-xs resize-none focus:bg-white shadow-[2px_2px_0px_rgba(0,0,0,0.05)] focus:shadow-[3px_3px_0px_#000] transition-all font-sans" 
+            placeholder="Type message block here..."
+          ></textarea>
+        </div>
+
+        <button 
+          type="submit" 
+          className="w-full bg-[#c85a17] hover:bg-[#b04a10] border-2 border-black text-white font-mono font-bold uppercase tracking-wider py-3 rounded-lg shadow-[2px_2px_0px_#000] hover:shadow-[3px_3px_0px_#000] active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] transition-all cursor-pointer text-xs flex items-center justify-center gap-1.5"
+        >
+          <Send size={13} /> TRANSMIT SECURE SIGNAL
+        </button>
+      </form>
+    );
+  };
+
+  // MAIN LAYOUT RETURN
+  return (
+    <div 
+      className="w-full min-h-screen font-sans text-gray-800 relative z-20 flex flex-col items-center justify-between pb-8 select-none"
+      style={{
+        backgroundColor: '#faf6ee',
+        backgroundImage: 'linear-gradient(to right, rgba(88, 98, 66, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(88, 98, 66, 0.08) 1px, transparent 1px)',
+        backgroundSize: '24px 24px'
+      }}
+    >
+      
+      {/* 🖥️ DESKTOP AREA CANVAS */}
+      <div className="w-full max-w-6xl px-4 md:px-8 pt-8 flex-1 flex flex-col justify-between">
+        
+        {/* Retro Header Info & Email Bar at the Top */}
+        <div className="w-full border-2 border-black bg-white/80 backdrop-blur-sm px-4 py-2.5 rounded-lg shadow-[3px_3px_0px_#000] flex flex-col sm:flex-row items-center justify-between gap-2 mb-8 select-text">
+          <div className="flex items-center gap-2 font-mono text-[10px] font-bold text-[#586242] uppercase tracking-wider">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500 animate-ping"></span>
+            <span>ANGAD-OS v4.9 // STATUS: SECURE</span>
+          </div>
+          <a
+            href="mailto:Parabangad123@gmail.com"
+            className="font-mono text-xs font-bold text-[#c85a17] hover:text-[#b04a10] hover:underline underline-offset-2 transition-colors flex items-center gap-1.5"
+          >
+            ✉️ parabangad123@gmail.com
+          </a>
+        </div>
+
+        {/* Sidebar desktop shortcuts columns */}
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-12 items-start gap-6 mt-2 mb-6">
+          
+          {/* Combined Left Sidebar / Mobile Top Desktop Icons */}
+          <div className="md:col-span-2 flex flex-row flex-wrap md:flex-col items-center justify-center md:justify-start gap-5 sm:gap-6 pt-2 w-full">
+            
+            {/* whoami app icon (About Me) */}
+            <button
+              onClick={() => handleIconClick('whoami')}
+              className="flex flex-col items-center group focus:outline-none cursor-pointer"
+            >
+              <div className={`p-1 transition-transform group-hover:scale-105 active:scale-95 ${activeWindow === 'whoami' ? 'bg-[#586242]/10 border-2 border-dashed border-[#586242] rounded-xl' : ''}`}>
+                <RetroWhoamiIcon />
+              </div>
+              <span className="mt-2 text-[11px] font-mono font-bold text-gray-800 uppercase tracking-wide bg-white/60 border border-black/10 px-1.5 rounded">
+                about me
+              </span>
+            </button>
+
+            {/* projects folder icon */}
+            <button
+              onClick={() => handleIconClick('projects')}
+              className="flex flex-col items-center group focus:outline-none cursor-pointer"
+            >
+              <div className={`p-1 transition-transform group-hover:scale-105 active:scale-95 ${activeWindow === 'projects' ? 'bg-[#586242]/10 border-2 border-dashed border-[#586242] rounded-xl' : ''}`}>
+                <RetroFolderIcon />
+              </div>
+              <span className="mt-2 text-[11px] font-mono font-bold text-gray-800 uppercase tracking-wide bg-white/60 border border-black/10 px-1 rounded">
+                projects
+              </span>
+            </button>
+
+            {/* education folder icon */}
+            <button
+              onClick={() => handleIconClick('education')}
+              className="flex flex-col items-center group focus:outline-none cursor-pointer"
+            >
+              <div className={`p-1 transition-transform group-hover:scale-105 active:scale-95 ${activeWindow === 'education' ? 'bg-[#586242]/10 border-2 border-dashed border-[#586242] rounded-xl' : ''}`}>
+                <RetroFolderIcon />
+              </div>
+              <span className="mt-2 text-[11px] font-mono font-bold text-gray-800 uppercase tracking-wide bg-white/60 border border-black/10 px-1 rounded">
+                education
+              </span>
+            </button>
+
+            {/* ping folder icon (Contact Me) */}
+            <button
+              onClick={() => handleIconClick('ping')}
+              className="flex flex-col items-center group focus:outline-none cursor-pointer"
+            >
+              <div className={`p-1 transition-transform group-hover:scale-105 active:scale-95 ${activeWindow === 'ping' ? 'bg-[#586242]/10 border-2 border-dashed border-[#586242] rounded-xl' : ''}`}>
+                <RetroFolderIcon />
+              </div>
+              <span className="mt-2 text-[11px] font-mono font-bold text-gray-800 uppercase tracking-wide bg-white/60 border border-black/10 px-1.5 rounded">
+                contact me
+              </span>
+            </button>
+
+            {/* resume folder icon */}
+            <button
+              onClick={() => handleIconClick('resume')}
+              className="flex flex-col items-center group focus:outline-none cursor-pointer"
+            >
+              <div className="p-1 transition-transform group-hover:scale-105 active:scale-95">
+                <RetroFolderIcon />
+              </div>
+              <span className="mt-2 text-[11px] font-mono font-bold text-gray-800 uppercase tracking-wide bg-white/60 border border-black/10 px-1 rounded">
+                resume
+              </span>
+            </button>
+
+            {/* terminal app icon to switch back to terminal portfolio */}
+            <button
+              onClick={onSwitchToTerminal}
+              className="flex flex-col items-center group focus:outline-none cursor-pointer"
+              title="Switch to Hacker CLI mode"
+            >
+              <div className="p-1 transition-transform group-hover:scale-105 active:scale-95">
+                <RetroTerminalIcon />
+              </div>
+              <span className="mt-2 text-[11px] font-mono font-bold text-gray-800 uppercase tracking-wide bg-white/60 border border-black/10 px-1 rounded">
+                terminal
+              </span>
+            </button>
+
+          </div>
+
+          {/* Center Main Floating Application Window (Spans remaining 10 columns!) */}
+          <div className="md:col-span-10 flex justify-center items-center py-2 h-full min-h-[380px] w-full">
+            {activeWindow ? (
+              <div 
+                className={`w-full max-w-3xl border-[3px] border-black rounded-b-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col animate-fade-in ${
+                  activeWindow === 'hack' ? 'bg-black' : 'bg-[#faf6ee]'
+                }`}
+              >
+                {/* Thick Olive Green Window Header Path */}
+                <div className="bg-[#586242] border-b-[3px] border-black px-4 py-3 flex items-center justify-between select-none">
+                  <span className="font-mono text-white text-[11px] font-bold uppercase tracking-wider">
+                    {activeWindow === 'whoami' && 'C:\\ANGAD\\about_me'}
+                    {activeWindow === 'projects' && 'C:\\ANGAD\\projects'}
+                    {activeWindow === 'education' && `C:\\ANGAD\\education${educationPath !== 'root' ? '\\' + educationPath : ''}`}
+                    {activeWindow === 'ping' && 'C:\\ANGAD\\contact_me'}
+                    {activeWindow === 'hack' && 'C:\\ANGAD\\hack'}
+                  </span>
+                  
+                  {/* Retro Red Square Close Button */}
+                  <button 
+                    onClick={handleCloseWindow}
+                    className="w-6 h-6 bg-[#d9534f] hover:bg-[#c9302c] border-2 border-black flex items-center justify-center text-white font-bold font-mono text-xs shadow-[1.5px_1.5px_0px_#000] active:translate-y-[0.5px] active:shadow-[0.5px_0.5px_0px_#000] focus:outline-none cursor-pointer"
+                    title="Close Window"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* Solid window body */}
+                <div className={`p-6 md:p-8 flex-1 ${activeWindow === 'hack' ? 'bg-black' : 'bg-[#f5efe4]'}`}>
+                  {activeWindow === 'whoami' && renderWhoamiWindow()}
+                  {activeWindow === 'projects' && renderProjectsWindow()}
+                  {activeWindow === 'education' && renderEducationWindow()}
+                  {activeWindow === 'ping' && renderPingWindow()}
+                  {activeWindow === 'hack' && <MatrixRain />}
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="text-center font-mono text-xs text-gray-500 bg-white/50 border-2 border-dashed border-black/20 rounded-2xl py-16 px-6 shadow-inner select-none flex flex-col items-center justify-center gap-2 w-full">
+                <span>SYSTEM DISCONNECTED // STATUS: IDLE</span>
+                <span className="text-[10px] text-gray-400">CLICK ANY SHORTCUT ICON ON THE DESKTOP TO LOAD PROGRAM CONSOLE</span>
+              </div>
+            )}
           </div>
-        </section>
+
+        </div>
 
       </div>
 
-      {/* ====================================================
-          FLOATING INTERACTIVE TERMINAL WINDOW OVERLAY
-         ==================================================== */}
-      {isTerminalOpen && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-[100] flex items-center justify-center p-4 md:p-8 lg:p-12 animate-fade-in animate-duration-300">
-          <div className="w-full max-w-4xl animate-zoom-in relative">
-            <TerminalWindow onClose={() => setIsTerminalOpen(false)} initialCommand="whoami" />
-          </div>
+      {/* 🚥 MIDDLE HORIZONTAL OLIVE GREEN DIVIDER BAND & SOCIAL APP BUTTONS */}
+      <div className="w-full bg-[#586242] border-y-[3px] border-black py-3.5 flex items-center justify-center shadow-[0_4px_0px_rgba(0,0,0,0.06)] select-none">
+        <div className="flex gap-5 sm:gap-7">
+          {[
+            { id: 'linkedin', url: 'https://www.linkedin.com/in/angad-parab130905/', color: 'bg-[#0077b5]', text: 'in' },
+            { id: 'github', url: 'https://github.com/AngadParab', color: 'bg-[#333333]', text: 'git' },
+            { id: 'instagram', url: 'https://www.instagram.com/the1nonly.angad/', color: 'bg-[#e1306c]', text: 'ig' },
+            { id: 'facebook', url: 'https://www.facebook.com/angad.parab.7/', color: 'bg-[#1877f2]', text: 'fb' },
+          ].map(app => (
+            <a
+              key={app.id}
+              href={app.url}
+              target="_blank"
+              rel="noreferrer"
+              className={`w-10 h-10 ${app.color} border-[2.5px] border-black rounded-xl flex items-center justify-center text-white font-black text-sm tracking-wide shadow-[3.5px_3.5px_0px_#000] hover:-translate-y-0.5 hover:shadow-[4.5px_4.5px_0px_#000] active:translate-y-0 active:shadow-[1.5px_1.5px_0px_#000] transition-all cursor-pointer`}
+              title={app.id}
+            >
+              {app.text}
+            </a>
+          ))}
         </div>
-      )}
+      </div>
+
+      {/* Retro 90s system status clock footer bar */}
+      <div className="w-full max-w-6xl px-4 md:px-8 mt-4 flex flex-col sm:flex-row items-center justify-between text-[10px] font-mono text-gray-500 gap-2 select-none">
+        <div>
+          ANGAD-OS DESKTOP // CLICK FOLDER ICONS TO LOAD RETRO APPLICATION WINDOWS
+        </div>
+        <div className="hidden sm:block">
+          SYSTEM_VER: RETRO_90S_V4.9 // STATUS: COMPILATION SECURED
+        </div>
+      </div>
 
     </div>
   );
