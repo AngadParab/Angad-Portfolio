@@ -222,10 +222,21 @@ const StandardPortfolio: React.FC<StandardPortfolioProps> = ({ onSwitchToTermina
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-3 pt-2 text-[10px] text-gray-400 font-bold uppercase">
-                <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Continuous Learning</span>
-                <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Threat Mitigation</span>
-                <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Hardware Interfacing</span>
+              <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/[0.05]">
+                <div className="flex flex-wrap gap-3 text-[10px] text-gray-400 font-bold uppercase">
+                  <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Continuous Learning</span>
+                  <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Threat Mitigation</span>
+                  <span className="px-3 py-1 border border-white/[0.08] bg-white/[0.02] rounded-md">Hardware Interfacing</span>
+                </div>
+                
+                <a
+                  href="/resume.pdf"
+                  download="Angad_Parab_CV.pdf"
+                  className="flex items-center gap-2 px-5 py-2 rounded-xl border border-neonGreen/30 bg-neonGreen/5 hover:bg-neonGreen/10 text-xs font-bold text-neonGreen hover:text-white transition-all shadow-[0_0_15px_rgba(158,240,106,0.05)] hover:shadow-[0_0_20px_rgba(158,240,106,0.15)] group"
+                >
+                  <Award size={14} className="group-hover:rotate-12 transition-transform" />
+                  DOWNLOAD CV
+                </a>
               </div>
             </div>
           </div>
