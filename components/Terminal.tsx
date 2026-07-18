@@ -11,29 +11,10 @@ const FormattedText = ({ text }: { text: string }) => {
   );
 };
 
-const MatrixRain = () => {
-  const [text, setText] = useState('');
-  useEffect(() => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~';
-    const interval = setInterval(() => {
-      let s = '';
-      for (let i = 0; i < 2000; i++) {
-        s += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      setText(s);
-    }, 50);
-    return () => clearInterval(interval);
-  }, []);
-  return (
-    <div className="absolute inset-0 bg-black/95 text-neonGreen font-mono text-xs sm:text-sm break-all overflow-hidden z-[100] p-4 leading-none">
-      {text}
-    </div>
-  );
-};
 
 const TerminalPrompt = ({ context = 'main' }: { context?: 'main' | 'whoami' | 'education' }) => (
   <span className="shrink-0 flex items-center gap-0 tracking-tight select-none">
-    <span className="text-neonGreen font-bold">angad@linux</span>
+    <span className="text-accent font-bold">angad@linux</span>
     <span className="text-white">:</span>
     <span className="text-[#3b8eea] font-bold">~{context === 'main' ? '' : `/${context}`}</span>
     <span className="text-white mr-2">$</span>
@@ -91,12 +72,12 @@ export const TransmitterWindow = () => {
   return (
     <div 
       onClick={(e) => e.stopPropagation()}
-      className={`my-4 border border-termBorder rounded-lg overflow-hidden bg-[#0a0a0a] shadow-2xl transition-all duration-300 animate-fade-in font-mono ${
+      className={`my-4 border border-termBorder rounded-lg overflow-hidden bg-slate-900 shadow-2xl transition-all duration-300 animate-fade-in font-mono ${
         isMaximized ? 'fixed inset-4 md:inset-8 z-50 flex flex-col' : 'w-full max-w-3xl flex flex-col'
       }`}
     >
       {/* Title Bar */}
-      <div className="bg-[#141414] border-b border-termBorder px-4 py-2 flex items-center justify-between select-none">
+      <div className="bg-slate-800 border-b border-termBorder px-4 py-2 flex items-center justify-between select-none">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
             <button 
@@ -116,8 +97,8 @@ export const TransmitterWindow = () => {
           </div>
           <span className="text-xs font-bold text-gray-400 ml-2">SECURE_TRANSMITTER.EXE</span>
         </div>
-        <div className="text-[10px] text-neonGreen font-bold flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-neonGreen animate-pulse"></span>
+        <div className="text-[10px] text-accent font-bold flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
           LINK ACTIVE
         </div>
       </div>
@@ -136,22 +117,22 @@ export const TransmitterWindow = () => {
               <div>PORT: <span className="text-white font-semibold">443 (TLS/SSL)</span></div>
               <div>PROTOCOL: <span className="text-white font-semibold">AES-256-GCM</span></div>
               <div>ENVELOPE: <span className="text-white font-semibold">Encrypted Signal Packet</span></div>
-              <div>NODE_ID: <span className="text-neonGreen">192.168.1.104</span></div>
+              <div>NODE_ID: <span className="text-accent">192.168.1.104</span></div>
             </div>
           </div>
 
           {/* Animated Signal Oscilloscope */}
-          <div className="h-28 bg-black/60 border border-termBorder/40 rounded p-2 flex flex-col justify-between relative overflow-hidden">
+          <div className="h-28 bg-slate-950/60 border border-termBorder/40 rounded p-2 flex flex-col justify-between relative overflow-hidden">
             <div className="text-[9px] text-gray-500 uppercase tracking-widest absolute top-2 left-2 z-10">
               SIGNAL_FREQUENCY_HZ
             </div>
             
             {/* Visual wave grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:10px_10px]"></div>
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(129,140,248,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(129,140,248,0.04)_1px,transparent_1px)] bg-[size:10px_10px]"></div>
             
             {/* SVG Wave */}
             <div className="w-full h-full flex items-center justify-center">
-              <svg className="w-full h-12 stroke-neonGreen stroke-2 fill-none overflow-visible" viewBox="0 0 200 40">
+              <svg className="w-full h-12 stroke-accent stroke-2 fill-none overflow-visible" viewBox="0 0 200 40">
                 <path d="M 0 20 Q 25 5, 50 20 T 100 20 T 150 20 T 200 20" className="animate-[pulse_1.5s_infinite_ease-in-out]">
                   <animate 
                     attributeName="d" 
@@ -167,7 +148,7 @@ export const TransmitterWindow = () => {
 
             <div className="flex justify-between items-center text-[9px] text-gray-500 z-10">
               <span>SCANNING...</span>
-              <span className="text-neonGreen animate-pulse">94.2 MHz</span>
+              <span className="text-accent animate-pulse">94.2 MHz</span>
             </div>
           </div>
 
@@ -180,7 +161,7 @@ export const TransmitterWindow = () => {
         <div className="md:col-span-3 flex flex-col justify-center">
           {step === 'form' && (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="text-neonGreen font-bold tracking-wider uppercase flex items-center gap-1.5 pb-2 border-b border-termBorder/50">
+              <div className="text-accent font-bold tracking-wider uppercase flex items-center gap-1.5 pb-2 border-b border-termBorder/50">
                 <TermIcon size={14} /> TRANSMISSION_SPECIFICATION
               </div>
 
@@ -192,7 +173,7 @@ export const TransmitterWindow = () => {
                     required 
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    className="bg-black/40 border border-termBorder/60 focus:border-neonGreen outline-none text-white px-2 py-1.5 rounded font-mono text-sm transition-colors" 
+                    className="bg-slate-950/45 border border-termBorder/60 focus:border-accent outline-none text-white px-2 py-1.5 rounded font-mono text-sm transition-colors" 
                     placeholder="Enter Identifier / Name" 
                   />
                 </div>
@@ -204,7 +185,7 @@ export const TransmitterWindow = () => {
                     required 
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="bg-black/40 border border-termBorder/60 focus:border-neonGreen outline-none text-white px-2 py-1.5 rounded font-mono text-sm transition-colors" 
+                    className="bg-slate-950/45 border border-termBorder/60 focus:border-accent outline-none text-white px-2 py-1.5 rounded font-mono text-sm transition-colors" 
                     placeholder="Enter Signal Target Email" 
                   />
                 </div>
@@ -216,7 +197,7 @@ export const TransmitterWindow = () => {
                     rows={4} 
                     value={message}
                     onChange={e => setMessage(e.target.value)}
-                    className="bg-black/40 border border-termBorder/60 focus:border-neonGreen outline-none text-white px-2 py-1.5 rounded font-mono text-sm resize-none transition-colors" 
+                    className="bg-slate-950/45 border border-termBorder/60 focus:border-accent outline-none text-white px-2 py-1.5 rounded font-mono text-sm resize-none transition-colors" 
                     placeholder="Enter Payload Content..."
                   ></textarea>
                 </div>
@@ -224,7 +205,7 @@ export const TransmitterWindow = () => {
 
               <button 
                 type="submit" 
-                className="w-full bg-neonGreen/10 border border-neonGreen/30 hover:border-neonGreen hover:bg-neonGreen/20 text-neonGreen hover:text-white py-2 rounded text-xs transition-all duration-200 flex items-center justify-center gap-2 font-bold cursor-pointer"
+                className="w-full bg-accent/10 border border-accent/30 hover:border-accent hover:bg-accent/20 text-accent hover:text-white py-2 rounded text-xs transition-all duration-200 flex items-center justify-center gap-2 font-bold cursor-pointer"
               >
                 <Send size={12} /> TRANSMIT SIGNAL ENCRYPTED
               </button>
@@ -238,7 +219,7 @@ export const TransmitterWindow = () => {
                 UPLOADING PACKET TO PORT: 443...
               </div>
               
-              <div className="bg-black border border-termBorder/60 rounded p-3 text-neonGreen font-mono text-xs tracking-widest text-center select-none">
+              <div className="bg-slate-950 border border-termBorder/60 rounded p-3 text-accent font-mono text-xs tracking-widest text-center select-none">
                 {getProgressBar()} <span className="ml-2 font-bold text-white">{progress}%</span>
               </div>
               
@@ -282,7 +263,7 @@ export const TransmitterWindow = () => {
 
 export const getWhoamiContent = () => (
   <div className="max-w-2xl space-y-2 animate-fade-in mt-2 mb-4">
-    <pre className="text-neonGreen font-mono text-[10px] sm:text-xs leading-[1.1] mb-6">
+    <pre className="text-accent font-mono text-[10px] sm:text-xs leading-[1.1] mb-6">
       {`    _    _   _  ____    _    ____  
    / \\  | \\ | |/ ___|  / \\  |  _ \\ 
   / _ \\ |  \\| | |  _  / _ \\ | | | |
@@ -293,7 +274,7 @@ export const getWhoamiContent = () => (
     <div className="space-y-4">
       <p className="text-xl text-white font-bold tracking-wide leading-relaxed">
         I learn like a scientist:<br />
-        <span className="text-neonGreen">observe, experiment, break, rebuild, improve.</span>
+        <span className="text-accent">observe, experiment, break, rebuild, improve.</span>
       </p>
       <p className="text-gray-300 leading-relaxed">
         I'm a naturally curious mind who loves understanding how things work—whether it’s technology, design, human behavior, or the hidden mechanics behind everyday systems. My goal isn’t to master one field, but to connect ideas across many of them and create something meaningful.
@@ -302,7 +283,7 @@ export const getWhoamiContent = () => (
         Early exposure to real-world projects and corporate environments helped me sharpen my problem-solving, analytical, and communication skills. I enjoy diving deep into a topic, asking questions, and figuring out how things can be improved or redesigned. For me, learning is not a phase… it’s a habit.
       </p>
 
-      <div className="my-4 border-l-2 border-neonGreen/50 pl-4 py-2 bg-neonGreen/5 rounded-r">
+      <div className="my-4 border-l-2 border-accent/50 pl-4 py-2 bg-accent/5 rounded-r">
         <h4 className="text-mustard font-bold text-sm mb-2 uppercase tracking-wider">Some areas I experiment with:</h4>
         <ul className="space-y-1.5 text-sm text-gray-300">
           <li className="flex items-start gap-2"><span className="text-mint shrink-0 mt-0.5">▹</span> <span>Software, AI concepts & automation</span></li>
@@ -319,7 +300,7 @@ export const getWhoamiContent = () => (
     </div>
     <div className="grid grid-cols-2 gap-4 mt-4 text-sm border-t border-dashed border-divider pt-4">
       <div>
-        <span className="text-gray-500">Mindset:</span> <span className="text-neonGreen">Always Learning</span>
+        <span className="text-gray-500">Mindset:</span> <span className="text-accent">Always Learning</span>
       </div>
       <div>
         <span className="text-gray-500">Status:</span> <span className="text-pixelPink animate-pulse">● Building something new</span>
@@ -354,7 +335,7 @@ export const getCollegesContent = () => (
 
     <div className="border-l-2 border-termBorder pl-4 hover:border-mustard transition-colors">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-        <span className="text-neonGreen font-bold text-lg">B.Sc. in Computer Science</span>
+        <span className="text-accent font-bold text-lg">B.Sc. in Computer Science</span>
         <span className="text-gray-500 text-sm font-mono">Present</span>
       </div>
       <div className="text-white font-semibold text-base mb-2">Government  College of Arts , Science & Commerce ,Quepem, Goa</div>
@@ -363,7 +344,7 @@ export const getCollegesContent = () => (
 
     <div className="border-l-2 border-termBorder pl-4 hover:border-mustard transition-colors mt-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-        <span className="text-neonGreen font-bold text-lg">Higher Secondary School (HSSC)</span>
+        <span className="text-accent font-bold text-lg">Higher Secondary School (HSSC)</span>
         <span className="text-gray-500 text-sm font-mono">Completed</span>
       </div>
       <div className="text-white font-semibold text-base mb-2">Multipurpose Higher Secondary, Borda Margao</div>
@@ -372,7 +353,7 @@ export const getCollegesContent = () => (
 
     <div className="border-l-2 border-termBorder pl-4 hover:border-mustard transition-colors mt-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-        <span className="text-neonGreen font-bold text-lg">Secondary School  (SSC)</span>
+        <span className="text-accent font-bold text-lg">Secondary School  (SSC)</span>
         <span className="text-gray-500 text-sm font-mono">Completed</span>
       </div>
       <div className="text-white font-semibold text-base mb-2">Popular High School Margao </div>
@@ -387,7 +368,7 @@ export const getWorkshopsContent = () => (
     {WORKSHOPS.map((workshop, i) => (
       <div key={i} className="border-l-2 border-termBorder pl-4 hover:border-mustard transition-colors mb-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-          <span className="text-neonGreen font-bold text-base md:text-lg">{workshop.title}</span>
+          <span className="text-accent font-bold text-base md:text-lg">{workshop.title}</span>
           <span className="text-gray-500 text-sm font-mono">{workshop.period}</span>
         </div>
         <div className="text-pixelPink text-sm mb-1">{workshop.organizer}</div>
@@ -400,21 +381,17 @@ export const getWorkshopsContent = () => (
         <p className="text-gray-400 text-sm leading-relaxed mb-3 mt-1">{workshop.description}</p>
         
         {workshop.certificate && (
-          <div className="mt-4 relative max-w-[280px] group cursor-pointer border border-termBorder p-1 bg-black overflow-hidden" title="Click to view full certificate">
-            {/* CRT overlay */}
-            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_4px,3px_100%] opacity-80 group-hover:opacity-30 transition-opacity mix-blend-overlay"></div>
-            <div className="absolute inset-0 pointer-events-none bg-neonGreen/20 mix-blend-color z-10 group-hover:bg-transparent transition-colors"></div>
-            
+          <div className="mt-4 relative max-w-[280px] group cursor-pointer border border-termBorder p-1 bg-slate-950 overflow-hidden" title="Click to view full certificate">
             <a href={workshop.certificate} target="_blank" rel="noreferrer">
               <img 
                 src={workshop.certificate} 
                 alt={`${workshop.title} Certificate`}
-                className="w-full h-auto filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 relative z-0" 
+                className="w-full h-auto opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-0" 
               />
             </a>
             
-            <div className="absolute top-2 right-2 bg-black/80 text-neonGreen text-[10px] px-1 font-mono z-20 pointer-events-none border border-neonGreen/30 shadow-term-glow">
-              ENCRYPTED_DOC
+            <div className="absolute top-2 right-2 bg-slate-900/80 text-accent text-[10px] px-1 font-mono z-20 pointer-events-none border border-accent/30 shadow-term-glow">
+              DOCUMENT
             </div>
           </div>
         )}
@@ -429,28 +406,24 @@ export const getExperienceContent = () => (
     {EXPERIENCE.map((exp, i) => (
       <div key={i} className="border-l-2 border-termBorder pl-4 hover:border-mustard transition-colors">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-          <span className="text-neonGreen font-bold text-lg">{exp.role}</span>
+          <span className="text-accent font-bold text-lg">{exp.role}</span>
           <span className="text-gray-500 text-sm font-mono">{exp.period}</span>
         </div>
         <div className="text-pixelPink text-sm mb-2">{exp.company}</div>
         <p className="text-gray-400 text-sm leading-relaxed mb-3">{exp.description}</p>
         
         {exp.certificate && (
-          <div className="mt-4 relative max-w-[280px] group cursor-pointer border border-termBorder p-1 bg-black overflow-hidden" title="Click to view full certificate">
-            {/* CRT overlay */}
-            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_4px,3px_100%] opacity-80 group-hover:opacity-30 transition-opacity mix-blend-overlay"></div>
-            <div className="absolute inset-0 pointer-events-none bg-neonGreen/20 mix-blend-color z-10 group-hover:bg-transparent transition-colors"></div>
-            
+          <div className="mt-4 relative max-w-[280px] group cursor-pointer border border-termBorder p-1 bg-slate-950 overflow-hidden" title="Click to view full certificate">
             <a href={exp.certificate} target="_blank" rel="noreferrer">
               <img 
                 src={exp.certificate} 
                 alt={`${exp.company} Certificate`}
-                className="w-full h-auto filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 relative z-0" 
+                className="w-full h-auto opacity-90 group-hover:opacity-100 transition-all duration-300 relative z-0" 
               />
             </a>
             
-            <div className="absolute top-2 right-2 bg-black/80 text-neonGreen text-[10px] px-1 font-mono z-20 pointer-events-none border border-neonGreen/30 shadow-term-glow">
-              ENCRYPTED_DOC
+            <div className="absolute top-2 right-2 bg-slate-900/80 text-accent text-[10px] px-1 font-mono z-20 pointer-events-none border border-accent/30 shadow-term-glow">
+              DOCUMENT
             </div>
           </div>
         )}
@@ -465,7 +438,7 @@ export const getSkillsContent = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {/* Software Group */}
       <div className="space-y-3">
-        <div className="text-neonGreen border-b border-neonGreen/30 pb-1 mb-3">Software & Code</div>
+        <div className="text-accent border-b border-accent/30 pb-1 mb-3">Software & Code</div>
         <div className="flex justify-between items-center"><span className="text-gray-300">JavaScript/TypeScript</span> <span className="text-pixelPink">[██████████]</span></div>
         <div className="flex justify-between items-center"><span className="text-gray-300">React & Next.js</span> <span className="text-pixelPink">[████████░░]</span></div>
         <div className="flex justify-between items-center"><span className="text-gray-300">Node.js & Python</span> <span className="text-pixelPink">[███████░░░]</span></div>
@@ -474,7 +447,7 @@ export const getSkillsContent = () => (
 
       {/* Hardware Group */}
       <div className="space-y-3">
-        <div className="text-neonGreen border-b border-neonGreen/30 pb-1 mb-3">Hardware & Tools</div>
+        <div className="text-accent border-b border-accent/30 pb-1 mb-3">Hardware & Tools</div>
         <div className="flex justify-between items-center"><span className="text-gray-300">Arduino / ESP32</span> <span className="text-pixelPink">[████████░░]</span></div>
         <div className="flex justify-between items-center"><span className="text-gray-300">Raspberry Pi</span> <span className="text-pixelPink">[███████░░░]</span></div>
         <div className="flex justify-between items-center"><span className="text-gray-300">Circuit Design</span> <span className="text-pixelPink">[█████░░░░░]</span></div>
@@ -483,7 +456,7 @@ export const getSkillsContent = () => (
 
       {/* Design Group */}
       <div className="space-y-3 md:col-span-2">
-        <div className="text-neonGreen border-b border-neonGreen/30 pb-1 mb-3">Design & Media</div>
+        <div className="text-accent border-b border-accent/30 pb-1 mb-3">Design & Media</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
           <div className="flex justify-between items-center"><span className="text-gray-300">Figma / UI</span> <span className="text-pixelPink">[█████████░]</span></div>
           <div className="flex justify-between items-center"><span className="text-gray-300">Photoshop</span> <span className="text-pixelPink">[███████░░░]</span></div>
@@ -497,7 +470,7 @@ export const getSkillsContent = () => (
 
 export const getEducationMenu = () => (
   <div className="space-y-2 animate-fade-in font-mono mt-2 mb-4">
-    <div className="text-neonGreen border-b border-neonGreen/30 pb-2 mb-4 uppercase tracking-widest font-bold">
+    <div className="text-accent border-b border-accent/30 pb-2 mb-4 uppercase tracking-widest font-bold">
       [ EDUCATION & SKILLS MODULE ]
     </div>
     <div className="flex flex-col space-y-2 text-gray-300">
@@ -523,7 +496,7 @@ export const IframeWindow = ({ url, title }: { url: string; title: string }) => 
 
   if (!isOpen) {
     return (
-      <div className="text-gray-500 font-mono text-xs my-2 border border-divider/30 p-2 rounded bg-black/20 animate-fade-in">
+      <div className="text-gray-500 font-mono text-xs my-2 border border-divider/30 p-2 rounded bg-slate-950/20 animate-fade-in">
         [System] Connection to {title} preview closed.
       </div>
     );
@@ -532,12 +505,12 @@ export const IframeWindow = ({ url, title }: { url: string; title: string }) => 
   return (
     <div 
       onClick={(e) => e.stopPropagation()}
-      className={`my-4 border border-termBorder rounded-lg overflow-hidden bg-[#0d0d0d] shadow-2xl transition-all duration-300 animate-fade-in ${
+      className={`my-4 border border-termBorder rounded-lg overflow-hidden bg-slate-900 shadow-2xl transition-all duration-300 animate-fade-in ${
         isMaximized ? 'fixed inset-4 md:inset-8 z-50 flex flex-col' : 'w-full max-w-4xl flex flex-col'
       }`}
     >
       {/* Window Title Bar */}
-      <div className="bg-[#161616] border-b border-termBorder px-4 py-2 flex items-center justify-between select-none">
+      <div className="bg-slate-800 border-b border-termBorder px-4 py-2 flex items-center justify-between select-none">
         <div className="flex items-center gap-2">
           {/* Windows/Mac style dots */}
           <div className="flex gap-1.5">
@@ -559,16 +532,16 @@ export const IframeWindow = ({ url, title }: { url: string; title: string }) => 
           </div>
           <span className="text-xs font-mono font-bold text-gray-400 ml-2">{title} - Secure Stream</span>
         </div>
-        <div className="text-[10px] font-mono text-neonGreen/80 animate-pulse flex items-center gap-1.5">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-neonGreen"></span>
+        <div className="text-[10px] font-mono text-accent/80 animate-pulse flex items-center gap-1.5">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent"></span>
           LIVE_STREAM
         </div>
       </div>
       
       {/* Address Bar */}
-      <div className="bg-[#111111] border-b border-[#222222] px-3 py-1.5 flex items-center gap-2">
+      <div className="bg-slate-950 border-b border-slate-850 px-3 py-1.5 flex items-center gap-2">
         <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider font-mono">ADDR:</span>
-        <div className="flex-1 bg-black/50 border border-termBorder/50 rounded px-2 py-0.5 text-xs text-mint font-mono flex items-center gap-1.5 truncate">
+        <div className="flex-1 bg-slate-900/50 border border-termBorder/50 rounded px-2 py-0.5 text-xs text-mint font-mono flex items-center gap-1.5 truncate">
           <span className="text-gray-600 select-none">https://</span>
           <span>{url.replace('https://', '')}</span>
         </div>
@@ -589,7 +562,7 @@ export const IframeWindow = ({ url, title }: { url: string; title: string }) => 
 
 export const getProjectsListContent = () => (
   <div className="space-y-4 animate-fade-in font-mono max-w-3xl mt-2 mb-4">
-    <div className="text-neonGreen border-b border-neonGreen/30 pb-2 mb-4 uppercase tracking-widest font-bold">
+    <div className="text-accent border-b border-accent/30 pb-2 mb-4 uppercase tracking-widest font-bold">
       [ SYSTEM PORTFOLIO DATABANK ]
     </div>
     <div className="text-gray-300">
@@ -599,7 +572,7 @@ export const getProjectsListContent = () => (
         <span className="text-right">STATUS</span>
       </div>
       {PROJECTS.map((proj, i) => (
-        <div key={i} className="grid grid-cols-[60px_1fr_120px] py-1.5 hover:bg-neonGreen/5 transition-colors cursor-pointer border-b border-divider/10">
+        <div key={i} className="grid grid-cols-[60px_1fr_120px] py-1.5 hover:bg-accent/5 transition-colors cursor-pointer border-b border-divider/10">
           <span className="text-pixelPink font-bold">{(i + 1).toString().padStart(2, '0')}</span>
           <span className="text-white">{proj.title}</span>
           <span className="text-right text-mint">[ACTIVE]</span>
@@ -622,21 +595,19 @@ export const getProjectDetailsContent = (index: number, onLaunch?: () => void) =
   if (!proj) return <span className="text-red-400">Database Record Not Found.</span>;
 
   return (
-    <div className="space-y-6 animate-fade-in font-mono max-w-3xl mt-2 mb-4 border border-termBorder p-4 bg-black/40">
+    <div className="space-y-6 animate-fade-in font-mono max-w-3xl mt-2 mb-4 border border-termBorder p-4 bg-slate-950/40">
       <div className="flex justify-between items-center border-b border-termBorder pb-2">
-        <h3 className="text-neonGreen font-bold text-lg uppercase tracking-wider">{proj.title}_</h3>
-        <span className="text-xs bg-neonGreen/10 text-neonGreen px-2 py-0.5 border border-neonGreen/30 animate-pulse">RECORD_LOADED</span>
+        <h3 className="text-accent font-bold text-lg uppercase tracking-wider">{proj.title}_</h3>
+        <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 border border-accent/30 animate-pulse">RECORD_LOADED</span>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6">
-        {/* Encrypted preview image */}
-        <div className="relative w-full h-40 md:h-48 border border-termBorder bg-black overflow-hidden group">
-          <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_4px,3px_100%] opacity-80 group-hover:opacity-30 transition-opacity mix-blend-overlay"></div>
-          <div className="absolute inset-0 pointer-events-none bg-neonGreen/20 mix-blend-color z-10 group-hover:bg-transparent transition-colors"></div>
+        {/* Preview image */}
+        <div className="relative w-full h-40 md:h-48 border border-termBorder bg-slate-900 overflow-hidden group">
           <img 
             src={proj.image} 
             alt={proj.title}
-            className="w-full h-full object-cover filter grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-300"
           />
         </div>
 
@@ -699,7 +670,7 @@ export const getProjectDetailsContent = (index: number, onLaunch?: () => void) =
                 href={proj.github} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="text-neonGreen hover:text-white hover:underline decoration-neonGreen text-xs font-bold"
+                className="text-accent hover:text-white hover:underline decoration-accent text-xs font-bold"
               >
                 &gt; SOURCE CODE (GITHUB)
               </a>
@@ -816,7 +787,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
             <h4 className="text-mustard font-bold mb-4">Personal Details_</h4>
             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[160px_1fr] gap-2">
               <span className="text-gray-500">Email</span>
-              <span className="text-white hover:text-neonGreen transition-colors cursor-pointer"><a href="mailto:Parabangad123@gmail.com">Parabangad123@gmail.com</a></span>
+              <span className="text-white hover:text-accent transition-colors cursor-pointer"><a href="mailto:Parabangad123@gmail.com">Parabangad123@gmail.com</a></span>
             </div>
             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[160px_1fr] gap-2">
               <span className="text-gray-500">Gender</span>
@@ -836,7 +807,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
             </div>
             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[160px_1fr] gap-2">
               <span className="text-gray-500">Current Focus</span>
-              <span className="text-neonGreen">Building own OS</span>
+              <span className="text-accent font-bold">Building own OS</span>
             </div>
             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[160px_1fr] gap-2">
               <span className="text-gray-500">Side Quests</span>
@@ -973,7 +944,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
         response = createResponse(
           <div className="text-pixelPink font-mono text-sm leading-relaxed max-w-xl">
             [ERROR] Inline sandbox rendering is not supported for native Android (.apk) targets.<br />
-            Please execute the <a href={PROJECTS[2].github} target="_blank" rel="noreferrer" className="text-neonGreen underline decoration-neonGreen">SOURCE CODE (GITHUB)</a> command to review compilation structures.
+            Please execute the <a href={PROJECTS[2].github} target="_blank" rel="noreferrer" className="text-accent underline decoration-accent">SOURCE CODE (GITHUB)</a> command to review compilation structures.
           </div>
         );
       } else if (
@@ -985,7 +956,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
         response = createResponse(
           <div className="text-pixelPink font-mono text-sm leading-relaxed max-w-xl">
             [ERROR] Inline preview rendering is not supported for physical IoT systems & Local hardware kiosk servers.<br />
-            Please execute the <a href={PROJECTS[3].github} target="_blank" rel="noreferrer" className="text-neonGreen underline decoration-neonGreen">SOURCE CODE (GITHUB)</a> command to view local python/bridge compilation guidelines.
+            Please execute the <a href={PROJECTS[3].github} target="_blank" rel="noreferrer" className="text-accent underline decoration-accent">SOURCE CODE (GITHUB)</a> command to view local python/bridge compilation guidelines.
           </div>
         );
       } else if (normalizedCmd === 'ping' || normalizedCmd === '4' || command.trim() === '4') {
@@ -993,7 +964,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
       } else if (normalizedCmd === 'get resume') {
         window.open('/resume.pdf', '_blank');
         response = createResponse(
-          <div className="text-neonGreen">
+          <div className="text-accent">
             &gt; Initiating download sequence for resume.pdf... <span className="text-mint ml-2">Success!</span>
           </div>
         );
@@ -1083,10 +1054,6 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
 
       {/* Terminal Body */}
       <div className="flex-1 bg-gradient-to-b from-termBgStart/80 to-termBgEnd/80 backdrop-blur-md p-6 md:p-8 lg:p-10 overflow-y-auto font-mono text-base md:text-lg relative" id="terminal-body">
-        {isHacking && <MatrixRain />}
-
-        {/* Optional CRT Scanline Overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] z-10 bg-[length:100%_2px,3px_100%] opacity-20"></div>
 
         <div className="relative z-0 min-h-full pb-10">
           {/* Render Output */}
@@ -1098,7 +1065,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
                   <span className="text-white">{line.content}</span>
                 </div>
               ) : (
-                <div className="text-neonGreen/90 leading-relaxed">
+                <div className="text-accent/90 leading-relaxed">
                   {line.content}
                 </div>
               )}
@@ -1122,7 +1089,7 @@ const Terminal = forwardRef<TerminalRef, TerminalProps>(({ onClose, initialComma
               />
               {/* Custom Blinking Caret */}
               <div
-                className="absolute top-0 pointer-events-none bg-neonGreen w-2.5 h-5 animate-caret-blink"
+                className="absolute top-0 pointer-events-none bg-accent w-2.5 h-5 animate-caret-blink"
                 style={{ left: `${input.length}ch` }}
               ></div>
             </div>

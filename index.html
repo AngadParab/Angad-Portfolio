@@ -13,17 +13,18 @@
         theme: {
           extend: {
             colors: {
-              pageBg: '#09090b',
-              termBgStart: '#000000',
-              termBgEnd: '#0a0a0a',
-              termBorder: '#27272a',
-              termHeader: '#18181b',
+              pageBg: '#0f172a',
+              termBgStart: '#0f172a',
+              termBgEnd: '#1e293b',
+              termBorder: '#334155',
+              termHeader: '#1e293b',
               pixelPink: '#f43f5e',
-              neonGreen: '#00ff41',
+              neonGreen: '#818cf8',
+              accent: '#818cf8',
               mustard: '#fbbf24',
-              mint: '#22d3ee',
-              divider: '#27272a',
-              socialBg: '#18181b',
+              mint: '#38bdf8',
+              divider: '#334155',
+              socialBg: '#1e293b',
             },
             fontFamily: {
               sans: ['"Outfit"', 'sans-serif'],
@@ -31,7 +32,7 @@
               pixel: ['"Press Start 2P"', 'cursive'],
             },
             boxShadow: {
-              'term-glow': '0 0 30px rgba(0, 255, 65, 0.15)',
+              'term-glow': '0 0 30px rgba(129, 140, 248, 0.15)',
             },
             animation: {
               'caret-blink': 'blink 1s step-end infinite',
@@ -52,22 +53,19 @@
       }
     </script>
     <style>
-      .terminal-mode * {
-        cursor: none !important;
-      }
       /* Custom Scrollbar for Webkit */
       ::-webkit-scrollbar {
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #000000; 
+        background: #0f172a; 
       }
       ::-webkit-scrollbar-thumb {
-        background: #27272a; 
+        background: #334155; 
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #00ff41; 
+        background: #818cf8; 
       }
     </style>
   <script type="importmap">

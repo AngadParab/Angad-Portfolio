@@ -37,28 +37,6 @@ const RetroTerminalIcon: React.FC = () => (
   </div>
 );
 
-// Dynamic falling green letters for the HACK window
-const MatrixRain: React.FC = () => {
-  const [text, setText] = useState('');
-  useEffect(() => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~';
-    const interval = setInterval(() => {
-      let s = '';
-      for (let i = 0; i < 800; i++) {
-        s += chars.charAt(Math.floor(Math.random() * chars.length));
-        if (i % 25 === 0) s += '\n';
-      }
-      setText(s);
-    }, 60);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <pre className="text-[#39ff14] font-mono text-[9px] sm:text-[11px] leading-tight select-none break-all whitespace-pre-wrap h-[260px] overflow-hidden bg-black p-4 border border-black/40 rounded-lg">
-      {text}
-    </pre>
-  );
-};
 
 const StandardPortfolio: React.FC<StandardPortfolioProps> = ({ onSwitchToTerminal }) => {
   // Navigation: Track active window
@@ -780,7 +758,6 @@ const StandardPortfolio: React.FC<StandardPortfolioProps> = ({ onSwitchToTermina
                     {activeWindow === 'projects' && 'C:\\ANGAD\\projects'}
                     {activeWindow === 'education' && `C:\\ANGAD\\education${educationPath !== 'root' ? '\\' + educationPath : ''}`}
                     {activeWindow === 'ping' && 'C:\\ANGAD\\contact_me'}
-                    {activeWindow === 'hack' && 'C:\\ANGAD\\hack'}
                   </span>
                   
                   {/* Retro Red Square Close Button */}
@@ -794,12 +771,11 @@ const StandardPortfolio: React.FC<StandardPortfolioProps> = ({ onSwitchToTermina
                 </div>
 
                 {/* Solid window body */}
-                <div className={`p-6 md:p-8 flex-1 ${activeWindow === 'hack' ? 'bg-black' : 'bg-[#f5efe4]'}`}>
+                <div className="p-6 md:p-8 flex-1 bg-[#f5efe4]">
                   {activeWindow === 'whoami' && renderWhoamiWindow()}
                   {activeWindow === 'projects' && renderProjectsWindow()}
                   {activeWindow === 'education' && renderEducationWindow()}
                   {activeWindow === 'ping' && renderPingWindow()}
-                  {activeWindow === 'hack' && <MatrixRain />}
                 </div>
               </div>
             ) : (

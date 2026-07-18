@@ -5,7 +5,6 @@ import Badge from './components/Badge';
 import BackgroundNetwork from './components/BackgroundNetwork';
 import SystemHUD from './components/SystemHUD';
 import SpotifyWidget from './components/SpotifyWidget';
-import CustomCursor from './components/CustomCursor';
 import { SOCIAL_LINKS } from './constants';
 import { Github, Linkedin, Facebook, Instagram } from 'lucide-react';
 
@@ -46,8 +45,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`h-screen w-full flex flex-col md:flex-row bg-pageBg relative ${viewMode === 'terminal' ? 'cursor-none overflow-hidden' : 'overflow-x-hidden overflow-y-auto'}`}>
-      {viewMode === 'terminal' && <CustomCursor />}
+    <div className={`h-screen w-full flex flex-col md:flex-row bg-pageBg relative ${viewMode === 'terminal' ? 'overflow-hidden' : 'overflow-x-hidden overflow-y-auto'}`}>
       {viewMode === 'terminal' && <BackgroundNetwork />}
       {viewMode === 'terminal' && <SystemHUD />}
       <SpotifyWidget />
@@ -63,7 +61,7 @@ const App: React.FC = () => {
             <button
               key={item.id}
               onClick={() => handleNavClick(item.cmd, item.sectionId)}
-              className="font-mono text-sm text-gray-400 hover:text-neonGreen group transition-colors relative"
+              className="font-mono text-sm text-gray-400 hover:text-accent group transition-colors relative"
             >
               <span className="text-mustard mr-1">[{item.id}]</span>
               {item.label}
@@ -85,7 +83,7 @@ const App: React.FC = () => {
             <button
               key={item.id}
               onClick={() => handleNavClick(item.cmd, item.sectionId)}
-              className="flex flex-col items-center text-[10px] font-mono text-gray-400 active:text-neonGreen"
+              className="flex flex-col items-center text-[10px] font-mono text-gray-400 active:text-accent"
             >
               <span className="text-mustard text-xs">[{item.id}]</span>
               {item.label}
@@ -106,7 +104,7 @@ const App: React.FC = () => {
                   href={link.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="w-10 h-10 rounded-full bg-socialBg flex items-center justify-center text-white transition-all duration-300 hover:text-neonGreen hover:shadow-[0_0_10px_rgba(158,240,106,0.5)] group"
+                  className="w-10 h-10 rounded-full bg-socialBg flex items-center justify-center text-white transition-all duration-300 hover:text-accent hover:shadow-[0_0_10px_rgba(129,140,248,0.5)] group"
                   aria-label={link.name}
                 >
                   <Icon size={18} className="group-hover:scale-110 transition-transform" />
@@ -137,7 +135,7 @@ const App: React.FC = () => {
             <div className="w-[1px] h-32 bg-divider"></div>
             <a
               href="mailto:Parabangad123@gmail.com"
-              className="writing-mode-vertical rotate-180 text-xs font-mono text-neonGreen/80 tracking-widest hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all whitespace-nowrap"
+              className="writing-mode-vertical rotate-180 text-xs font-mono text-accent/80 tracking-widest hover:text-white hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)] transition-all whitespace-nowrap"
               style={{ writingMode: 'vertical-rl' }}
             >
               Parabangad123@gmail.com

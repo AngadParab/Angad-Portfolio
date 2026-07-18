@@ -110,7 +110,7 @@ export const WELCOME_MSG = (
     <h1 className="font-pixel text-3xl md:text-5xl lg:text-6xl text-pixelPink tracking-widest mb-2 select-none animate-fade-in">
     ANGAD PARAB
     </h1>
-    <div className="text-neonGreen text-lg md:text-xl font-bold border-b border-neonGreen/20 pb-2 w-fit animate-fade-in" style={{ animationDelay: '0.1s' }}>
+    <div className="text-accent text-lg md:text-xl font-bold border-b border-accent/20 pb-2 w-fit animate-fade-in" style={{ animationDelay: '0.1s' }}>
       &gt; Jack of all trades, master of some
     </div>
     <div className="text-gray-300 max-w-2xl leading-relaxed animate-fade-in min-h-[5rem]" style={{ animationDelay: '0.2s' }}>
@@ -120,7 +120,7 @@ export const WELCOME_MSG = (
       />
       <br />
       <span className="inline-block mt-4 animate-fade-in opacity-0" style={{ animationDelay: '4s', animationFillMode: 'forwards' }}>
-        <button className="text-neonGreen hover:text-mint hover:underline decoration-mint decoration-2 underline-offset-4 cursor-pointer transition-all">
+        <button className="text-accent hover:text-mint hover:underline decoration-mint decoration-2 underline-offset-4 cursor-pointer transition-all">
           Explore the Terminal
         </button>
       </span>
@@ -140,7 +140,7 @@ export const WELCOME_MSG = (
             <span className="text-mustard mr-2">[{item.id}]</span>
             <span className="text-mustard group-hover:text-mint transition-colors">[{item.cmd}]</span>
             <span className="text-gray-500 mx-2">:</span>
-            <span className="text-neonGreen">{item.desc}</span>
+            <span className="text-accent">{item.desc}</span>
           </div>
         ))}
       </div>

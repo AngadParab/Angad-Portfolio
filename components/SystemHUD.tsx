@@ -35,24 +35,24 @@ const SystemHUD: React.FC = () => {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 hidden md:block">
       {/* Top Left */}
-      <div className="absolute top-4 left-4 font-mono text-[10px] text-[#00F0FF]/50 opacity-70">
+      <div className="absolute top-4 left-4 font-mono text-[10px] text-slate-400/70">
         <div>SYS.VER 4.2.1</div>
         <div>UPLINK: SECURE</div>
         <div className="flex items-center gap-1 mt-1">
-          <div className="w-1.5 h-1.5 bg-neonGreen rounded-full animate-pulse"></div>
+          <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></div>
           STATUS: ONLINE
         </div>
       </div>
 
       {/* Top Right */}
-      <div className="absolute top-4 right-4 font-mono text-[10px] text-[#00F0FF]/50 text-right opacity-70">
+      <div className="absolute top-4 right-4 font-mono text-[10px] text-slate-400/70 text-right">
         <div>LAT: {latency}ms</div>
         <div>MEM: {memory}%</div>
         <div>NET: ENCRYPTED</div>
       </div>
 
       {/* Bottom Left */}
-      <div className="absolute bottom-4 left-4 font-mono text-[10px] text-[#00F0FF]/50 opacity-70">
+      <div className="absolute bottom-4 left-4 font-mono text-[10px] text-slate-400/70">
         <div>UPTIME: {formatTime(uptime)}</div>
         <div>ROOT: ACCESS GRANTED</div>
       </div>

@@ -47,7 +47,7 @@ const BackgroundNetwork: React.FC = () => {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 240, 255, 0.4)'; // Cyan color
+        ctx.fillStyle = 'rgba(129, 140, 248, 0.3)'; // Indigo accent color
         ctx.fill();
 
         // Check connections
@@ -63,8 +63,8 @@ const BackgroundNetwork: React.FC = () => {
             ctx.lineTo(p2.x, p2.y);
             // Opacity based on distance
             const opacity = 1 - distance / connectionDistance;
-            // Mix of cyan and neon green
-            ctx.strokeStyle = `rgba(0, 255, 65, ${opacity * 0.25})`; 
+            // Indigo stroke color
+            ctx.strokeStyle = `rgba(129, 140, 248, ${opacity * 0.15})`; 
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }

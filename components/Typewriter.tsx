@@ -31,10 +31,10 @@ const Typewriter: React.FC<TypewriterProps> = ({
     <span className={className}>
       {currentText}
       {showCursor && currentIndex < text.length && (
-        <span className="inline-block w-2 h-4 bg-neonGreen ml-1 animate-pulse align-middle" />
+        <span className="inline-block w-2 h-4 bg-accent ml-1 animate-pulse align-middle" />
       )}
       {showCursor && currentIndex >= text.length && (
-        <span className="inline-block w-2 h-4 bg-neonGreen ml-1 animate-caret-blink align-middle" />
+        <span className="inline-block w-2 h-4 bg-accent ml-1 animate-caret-blink align-middle" />
       )}
     </span>
   );
